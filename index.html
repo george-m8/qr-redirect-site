@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Generator (Local)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>QR Code Generator</h1>
+
+  <form id="qr-form">
+    <label>
+      Destination URL<br />
+      <input
+        type="text"
+        id="destination"
+        placeholder="https://example.com"
+        required
+      />
+    </label>
+
+    <br /><br />
+
+    <label>
+      Slug (optional)<br />
+      <input
+        type="text"
+        id="slug"
+        placeholder="leave blank to auto-generate"
+      />
+    </label>
+
+    <br /><br />
+
+    <button type="submit">Generate QR</button>
+  </form>
+
+  <hr />
+
+  <div id="output" style="display:none;">
+    <p>
+      QR Code Content:<br />
+      <a href="" target="_blank" rel="noopener noreferrer"><code id="redirect-url"></code></a>
+    </p>
+    <span>(click to test)</span>
+
+    <p>
+      Destination URL:<br />
+      <a href="" target="_blank" rel="noopener noreferrer"><code id="destination-url"></code></a>
+    </p>
+    <span>(click to test)</span>
+
+    <canvas id="qr-canvas"></canvas>
+
+    <br /><br />
+
+    <button id="download">Download PNG</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
