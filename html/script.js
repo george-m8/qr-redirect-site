@@ -10,6 +10,26 @@ const form = document.getElementById('qr-form')
     const destinationUrlLink = destinationUrlEl.parentElement
     const baseUrl = getBaseUrl()
     let currentDestination = ''
+    const STORAGE_KEY = 'qr-redirect-mappings'
+
+    function getStoredMappings() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY)
+            return stored ? JSON.parse(stored) : {}
+        } catch {
+            return {}
+        }
+    }
+
+    function storeMapping(destination, slug) {
+        try {
+            const mappings = getStoredMappings()
+            mappings[destination] = slug
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(mappings))
+        } catch (e) {
+            console.error('Failed to store mapping:', e)
+        }
+    }
 
     function getBaseUrl() {
         if (window.location.protocol === 'file:') {
@@ -59,13 +79,22 @@ const form = document.getElementById('qr-form')
     form.addEventListener('submit', async (e) => {
         e.preventDefault()
 
-        const slug = slugInput.value.trim() || generateSlug()
         const rawDestination = destinationInput.value
         const destination = normaliseDestination(rawDestination)
 
         if (!destination) {
             alert('Please enter a valid URL')
             return
+        }
+
+        // Check if we already have a slug for this destination
+        const mappings = getStoredMappings()
+        let slug = mappings[destination]
+        
+        // If no existing slug and user didn't provide one, generate new
+        if (!slug) {
+            slug = slugInput.value.trim() || generateSlug()
+            storeMapping(destination, slug)
         }
         
         const redirectUrl = `${baseUrl}/r/${slug}`
