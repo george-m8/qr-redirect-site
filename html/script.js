@@ -11,6 +11,35 @@ const form = document.getElementById('qr-form')
     const baseUrl = getBaseUrl()
     let currentDestination = ''
     const STORAGE_KEY = 'qr-redirect-mappings'
+    const RATE_LIMIT_KEY = 'qr-redirect-rate-limit'
+    const MAX_REQUESTS = 10
+    const TIME_WINDOW = 60000 // 1 minute in milliseconds
+
+    function checkRateLimit() {
+        try {
+            const now = Date.now()
+            const stored = localStorage.getItem(RATE_LIMIT_KEY)
+            let timestamps = stored ? JSON.parse(stored) : []
+            
+            // Remove timestamps outside the time window
+            timestamps = timestamps.filter(ts => now - ts < TIME_WINDOW)
+            
+            if (timestamps.length >= MAX_REQUESTS) {
+                const oldestTimestamp = Math.min(...timestamps)
+                const waitTime = Math.ceil((TIME_WINDOW - (now - oldestTimestamp)) / 1000)
+                return { allowed: false, waitTime }
+            }
+            
+            // Add current timestamp
+            timestamps.push(now)
+            localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps))
+            
+            return { allowed: true }
+        } catch (e) {
+            console.error('Rate limit check failed:', e)
+            return { allowed: true } // Fail open
+        }
+    }
 
     function getStoredMappings() {
         try {
@@ -93,6 +122,13 @@ const form = document.getElementById('qr-form')
         
         // If no existing slug and user didn't provide one, generate new
         if (!slug) {
+            // Check rate limit for new QR code generation
+            const rateLimitCheck = checkRateLimit()
+            if (!rateLimitCheck.allowed) {
+                alert(`Rate limit exceeded. Please wait ${rateLimitCheck.waitTime} seconds before generating more QR codes.`)
+                return
+            }
+            
             slug = slugInput.value.trim() || generateSlug()
             storeMapping(destination, slug)
         }
