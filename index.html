@@ -11,19 +11,7 @@
 <body>
   <h1>QR Code Generator</h1>
 
-  <form id="qr-form">
-    <label>
-      Destination URL<br />
-      <input
-        type="text"
-        id="destination"
-        placeholder="https://example.com"
-        required
-      />
-    </label>
-
-    <br /><br />
-    <div id="auth">
+  <div id="auth">
     <button id="login-google">Log in with Google</button>
     <button id="login-github">Log in with GitHub</button>
 
@@ -37,6 +25,19 @@
     <button id="logout" style="display:none;">Log out</button>
     <span id="user-info"></span>
   </div>
+
+  <form id="qr-form">
+    <label>
+      Destination URL<br />
+      <input
+        type="text"
+        id="destination"
+        placeholder="https://example.com"
+        required
+      />
+    </label>
+
+    <br /><br />
 
     <label>
       Slug (optional)<br />
