@@ -1,6 +1,15 @@
-export async function onRequest(context) {
-  const { slug } = context.params
+export async function onRequest({ params, env }) {
+  const { slug } = params
+  const { DB } = env
 
-  // temporary test redirect
-  return Response.redirect('https://example.com', 302)
+  const row = await DB
+    .prepare('SELECT destination FROM qr_codes WHERE slug = ?')
+    .bind(slug)
+    .first()
+
+  if (!row) {
+    return new Response('Not found', { status: 404 })
+  }
+
+  return Response.redirect(row.destination, 302)
 }
