@@ -2,7 +2,7 @@ function generateSlug() {
   return Math.random().toString(36).slice(2, 8)
 }
 
-const RATE_LIMIT_MAX = 10
+const RATE_LIMIT_MAX = 6 // requests
 const RATE_LIMIT_WINDOW = 60 // seconds
 
 async function checkRateLimit(DB, identifier) {
