@@ -16,6 +16,14 @@ if (!window.firebaseAuth) {
     
     // Make openAuthModal available for button onclick
     window.openAuthModal = openAuthModal;
+    
+    // Auto-open modal if ?login query param is present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('login')) {
+      openAuthModal();
+      // Clean up URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   });
 
   // Get form elements that need to be enabled/disabled
