@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My QR Codes - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>My QR Codes</h1>
+
+  <div>
+    <a href="/">← Back to Generator</a>
+    <button id="logout" style="display:none; float: right;">Log out</button>
+    <span id="user-info" style="float: right; margin-right: 15px;"></span>
+  </div>
+
+  <hr />
+
+  <div id="dashboard-content">
+    <p>Loading...</p>
+  </div>
+
+  <!-- Firebase Auth (CDN, no build step) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-f9TGmva8BXdX6_b460tdrUkzTGkbjjw",
+      authDomain: "qr-redirect-site-1f3b9.firebaseapp.com",
+      projectId: "qr-redirect-site-1f3b9",
+      storageBucket: "qr-redirect-site-1f3b9.firebasestorage.app",
+      messagingSenderId: "897097551184",
+      appId: "1:897097551184:web:aca2f4c3aeac4f21b4b055"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Expose to dashboard.js
+    window.firebaseAuth = {
+      auth,
+      onAuthStateChanged,
+      signOut
+    };
+  </script>
+
+  <script src="dashboard.js" defer></script>
+</body>
+</html>

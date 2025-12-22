@@ -23,8 +23,13 @@
     </div>
 
     <button id="logout" style="display:none;">Log out</button>
+    <a id="dashboard-link" href="/dashboard.html" style="display:none; margin-left: 15px;">
+      <button>See & Edit My QR Codes</button>
+    </a>
     <span id="user-info"></span>
   </div>
+
+  <hr />
 
   <form id="qr-form">
     <label>
@@ -64,15 +69,6 @@
     <button id="download">Download PNG</button>
   </div>
 
-  <hr />
-
-  <!-- Dashboard Section -->
-  <div id="dashboard" style="display:none;">
-    <h2>My QR Codes</h2>
-    <div id="dashboard-content">
-      <p>Loading...</p>
-    </div>
-  </div>
 
   <!-- Firebase Auth (CDN, no build step) -->
   <script type="module">
