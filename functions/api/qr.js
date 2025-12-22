@@ -65,7 +65,7 @@ export async function onRequestPost({ request, env }) {
     );
   }
 
-  const userId = payload.user_id; // Firebase uid
+  const userId = payload.sub; // Firebase UID
 
   const RATE_LIMIT_MAX = 6 // requests
   const RATE_LIMIT_WINDOW = 60 // seconds
