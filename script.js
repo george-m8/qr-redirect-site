@@ -123,7 +123,6 @@ if (!window.firebaseAuth) {
 
 const form = document.getElementById('qr-form')
     const destinationInput = document.getElementById('destination')
-    const slugInput = document.getElementById('slug')
     const output = document.getElementById('output')
     const redirectUrlEl = document.getElementById('redirect-url')
     const redirectUrlLink = redirectUrlEl.parentElement
@@ -253,10 +252,7 @@ const form = document.getElementById('qr-form')
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 },
-                body: JSON.stringify({ 
-                    destination,
-                    slug: slugInput.value.trim() || undefined
-                })
+                body: JSON.stringify({ destination })
             })
 
             if (!response.ok) {
