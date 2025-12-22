@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your QR Code</title>
+  
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      GoogleAuthProvider,
+      GithubAuthProvider
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAblgHPKiW4hjU9JVwKR6LT3N3wNpzj1yI",
+      authDomain: "qr-redirect-site-1f3b9.firebaseapp.com",
+      projectId: "qr-redirect-site-1f3b9",
+      storageBucket: "qr-redirect-site-1f3b9.firebasestorage.app",
+      messagingSenderId: "877135858527",
+      appId: "1:877135858527:web:ee7e79d851e61e06ded09e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.firebaseAuth = {
+      auth,
+      onAuthStateChanged,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      GoogleAuthProvider,
+      GithubAuthProvider
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .qr-container {
+      text-align: center;
+      margin: 30px 0;
+      padding: 30px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #f9f9f9;
+    }
+    canvas {
+      margin: 20px 0;
+      border: 1px solid #ddd;
+    }
+    .url-section {
+      margin: 20px 0;
+      text-align: left;
+      padding: 15px;
+      background: white;
+      border-radius: 5px;
+    }
+    .url-section p {
+      margin: 10px 0;
+    }
+    .url-section code {
+      background: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 3px;
+      word-break: break-all;
+    }
+    .edit-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 5px;
+      border: 2px solid #3498db;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    .primary-btn {
+      background: #3498db;
+      color: white;
+    }
+    .primary-btn:hover {
+      background: #2980b9;
+    }
+    .secondary-btn {
+      background: #95a5a6;
+      color: white;
+    }
+    .secondary-btn:hover {
+      background: #7f8c8d;
+    }
+    .success-btn {
+      background: #27ae60;
+      color: white;
+    }
+    .success-btn:hover {
+      background: #229954;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status-message {
+      margin-left: 10px;
+      font-size: 14px;
+    }
+    .error {
+      color: #e74c3c;
+      padding: 10px;
+      background: #fadbd8;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .auth-notice {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #ffc107;
+    }
+    .action-buttons {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your QR Code</h1>
+  
+  <div id="loading" style="text-align: center; padding: 50px;">
+    <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+    <p>Loading QR code...</p>
+  </div>
+
+  <div id="error" class="error" style="display: none;"></div>
+
+  <div id="content" style="display: none;">
+    <div class="qr-container">
+      <canvas id="qr-canvas"></canvas>
+      
+      <div class="url-section">
+        <p><strong>Your Short URL:</strong></p>
+        <p>
+          <a href="" id="redirect-url" target="_blank" rel="noopener noreferrer">
+            <code id="redirect-url-text"></code>
+          </a>
+          <button class="secondary-btn" onclick="copyToClipboard('redirect')">Copy</button>
+        </p>
+        
+        <p><strong>Destination:</strong></p>
+        <p>
+          <a href="" id="destination-url" target="_blank" rel="noopener noreferrer">
+            <code id="destination-url-text"></code>
+          </a>
+        </p>
+      </div>
+
+      <div class="edit-section">
+        <h3>Edit Destination</h3>
+        <div id="auth-required" class="auth-notice" style="display: none;">
+          <p>⚠️ Please <a href="/">log in</a> to edit this QR code's destination.</p>
+        </div>
+        <div id="edit-form" style="display: none;">
+          <p><small>Change where this QR code redirects to:</small></p>
+          <input type="text" id="new-destination" placeholder="https://new-destination.com" />
+          <br><br>
+          <button class="primary-btn" id="save-btn" onclick="updateDestination()">Save Changes</button>
+          <span id="save-status" class="status-message"></span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="success-btn" onclick="downloadQR()">Download QR Code</button>
+        <button class="secondary-btn" onclick="window.location.href='/dashboard.html'">See All My QR Codes</button>
+        <button class="secondary-btn" onclick="window.location.href='/'">Create Another</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/qr.js"></script>
+  
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</body>
+</html>

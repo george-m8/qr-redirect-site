@@ -279,33 +279,6 @@ const form = document.getElementById('qr-form')
             return
         }
         
-        const redirectUrl = `${baseUrl}/r/${slug}`
-
-        currentDestination = destination
-        currentSlug = slug
-        redirectUrlEl.textContent = redirectUrl
-        redirectUrlLink.href = redirectUrl
-        destinationUrlEl.textContent = destination
-        destinationUrlLink.href = destination
-        output.style.display = 'block'
-
-        const destinationStr = sanitizeForFilename(currentDestination)
-        const title = `${slug}_${destinationStr}`
-        canvas.title = title
-
-        await QRCode.toCanvas(canvas, redirectUrl, {
-            width: 256,
-            margin: 2
-        })
-    })
-
-    downloadBtn.addEventListener('click', () => {
-      const hostnameStr = sanitizeForFilename(baseUrl)
-      const destinationStr = sanitizeForFilename(currentDestination)
-      const filename = `${hostnameStr}_${currentSlug}_${destinationStr}.png`
-      
-      const link = document.createElement('a')
-      link.download = filename
-      link.href = canvas.toDataURL('image/png')
-      link.click()
+        // Redirect to ad page with slug
+        window.location.href = `/ad.html?slug=${encodeURIComponent(slug)}`;
     })

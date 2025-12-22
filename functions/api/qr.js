@@ -44,11 +44,51 @@ async function checkRateLimit(db, identifier, max, windowSeconds) {
   }
 }
 
-// GET /api/qr - List all QR codes owned by authenticated user
+// GET /api/qr - List all QR codes for user OR get single QR by slug (public)
 export async function onRequestGet({ request, env }) {
   const { DB, FIREBASE_PROJECT_ID } = env
+  
+  // Check if slug parameter is provided for single QR lookup
+  const url = new URL(request.url);
+  const slug = url.searchParams.get('slug');
+  
+  // If slug is provided, return single QR (public, no auth required)
+  if (slug) {
+    try {
+      const result = await DB
+        .prepare('SELECT slug, destination, owner, created_at FROM qr_codes WHERE slug = ?')
+        .bind(slug)
+        .first();
 
-  // Extract and verify Firebase token
+      if (!result) {
+        return new Response(
+          JSON.stringify({ error: 'QR code not found' }),
+          { 
+            status: 404,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ qrCode: result }),
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    } catch (error) {
+      console.error('Failed to fetch QR code:', error);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch QR code' }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+  }
+
+  // Otherwise, list all QR codes for authenticated user
   const authHeader = request.headers.get('Authorization');
   const token = authHeader?.startsWith('Bearer ')
     ? authHeader.slice(7)
