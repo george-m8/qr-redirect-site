@@ -11,6 +11,7 @@
   
   <!-- Styles -->
   <link rel="stylesheet" href="/css/form-components.css">
+  <link rel="stylesheet" href="/css/base-components.css">
   <link rel="stylesheet" href="/css/receipt.css">
   <link rel="stylesheet" href="/css/qr-render.css">
   
@@ -66,7 +67,7 @@
 
     <div id="auth">
       <a href="/">
-        <button>← back to generator</button>
+        <button class="secondary-btn">← back to generator</button>
       </a>
       <a href="/dashboard.html">
         <button style="display:none;" id="dashboard-btn">dashboard</button>
@@ -84,6 +85,7 @@
       <div class="receipt-section">
         <div class="section-title">━━━ your qr code ━━━</div>
         <div id="qr-canvas" style="text-align: center; margin: 20px 0;"></div>
+        <p class="small-text" style="text-align: center;">(scan to test)</p>
       </div>
       
       <div class="receipt-section">
@@ -92,8 +94,9 @@
           <a href="" id="redirect-url" target="_blank" rel="noopener noreferrer">
             <code id="redirect-url-text"></code>
           </a>
-          <button class="secondary-btn" onclick="copyToClipboard('redirect')">copy</button>
+          <button class="secondary-btn" onclick="copyToClipboard('redirect')">copy</button>]
         </p>
+        <p class="small-text">(click to test)</p>
         
         <p><strong>destination:</strong></p>
         <p>
@@ -101,6 +104,7 @@
             <code id="destination-url-text"></code>
           </a>
         </p>
+        <p class="small-text">(click to test)</p>
       </div>
 
       <div class="receipt-section">
@@ -117,7 +121,7 @@
         </div>
       </div>
 
-      <div class="receipt-section" style="text-align: center;">
+      <div class="receipt-section vertical-flex" style="text-align: center;">
         <button onclick="downloadQR()">download qr code</button>
         <button onclick="window.location.href='/dashboard.html'">see all my qr codes</button>
         <button onclick="window.location.href='/'">create another</button>

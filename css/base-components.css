@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #e8e8e8;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vertical-flex {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.small-text {
+    font-size: 10px;
+    color: #666;
+}
