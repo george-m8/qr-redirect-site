@@ -13,24 +13,45 @@ export async function renderQRAsCharacters(text, container, options = {}) {
   const size = options.size || 'normal';
   
   try {
-    // Generate QR code matrix using QRCode library
-    const qr = await new Promise((resolve, reject) => {
-      QRCode.create(text, { errorCorrectionLevel: 'M' }, (err, qrcode) => {
-        if (err) reject(err);
-        else resolve(qrcode);
+    // Create temporary canvas to get pixel data
+    const tempCanvas = document.createElement('canvas');
+    const qrSize = size === 'small' ? 150 : 300;
+    
+    await new Promise((resolve, reject) => {
+      QRCode.toCanvas(tempCanvas, text, {
+        width: qrSize,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      }, (error) => {
+        if (error) reject(error);
+        else resolve();
       });
     });
     
-    const modules = qr.modules;
-    const moduleCount = modules.size;
+    // Get canvas context and read pixels
+    const ctx = tempCanvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+    const data = imageData.data;
     
-    // Create HTML representation using Unicode blocks
+    // Determine module size by finding where pattern starts
+    const moduleSize = Math.floor(tempCanvas.width / 33); // Approximate QR module count
+    const moduleCount = Math.floor(tempCanvas.width / moduleSize);
+    
+    // Sample pixels to build character grid
     let html = '';
     for (let row = 0; row < moduleCount; row++) {
       let rowHtml = '';
       for (let col = 0; col < moduleCount; col++) {
-        // Use full block for dark modules, space for light
-        rowHtml += modules.get(row, col) ? '█' : ' ';
+        const x = Math.floor(col * moduleSize + moduleSize / 2);
+        const y = Math.floor(row * moduleSize + moduleSize / 2);
+        const pixelIndex = (y * tempCanvas.width + x) * 4;
+        
+        // Check if pixel is dark (RGB close to 0)
+        const isDark = data[pixelIndex] < 128;
+        rowHtml += isDark ? '█' : ' ';
       }
       html += `<span class="qr-display-row" style="--row-index: ${row}">${rowHtml}</span>`;
     }
