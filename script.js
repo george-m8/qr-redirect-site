@@ -249,6 +249,7 @@ const form = document.getElementById('qr-form')
         let idToken
         try {
             idToken = await window.firebaseUser.getIdToken(true)
+            console.log('Got fresh token:', idToken.substring(0, 50) + '...')
         } catch (error) {
             console.error('Failed to get ID token:', error)
             alert('Session expired. Please log in again.')
@@ -283,8 +284,15 @@ const form = document.getElementById('qr-form')
                 })
 
                 if (!response.ok) {
-                    const error = await response.json()
-                    throw new Error(error.error || 'Failed to create QR code')
+                    const errorText = await response.text()
+                    console.error('API error:', response.status, errorText)
+                    let errorData
+                    try {
+                        errorData = JSON.parse(errorText)
+                    } catch {
+                        errorData = { error: errorText }
+                    }
+                    throw new Error(errorData.error || 'Failed to create QR code')
                 }
 
                 const data = await response.json()
