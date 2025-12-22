@@ -139,14 +139,31 @@ export async function onRequestPost({ request, env }) {
 
         inserted = true
         break
-      } catch {
-        // slug collision, retry
+      } catch (error) {
+        console.error(`Attempt ${i + 1} failed:`, error.message || error)
+        // If it's not a unique constraint error, stop retrying
+        if (!error.message?.includes('UNIQUE') && !error.message?.includes('unique')) {
+          return new Response(
+            JSON.stringify({ error: `Database error: ${error.message || 'Unknown error'}` }),
+            { 
+              status: 500,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          )
+        }
+        // Otherwise it's a slug collision, retry
       }
     }
   }
 
   if (!inserted) {
-    return new Response('Could not generate unique slug', { status: 500 })
+    return new Response(
+      JSON.stringify({ error: 'Could not generate unique slug after 5 attempts' }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
   }
 
   const redirectUrl = new URL(`/r/${slug}`, request.url).toString()
