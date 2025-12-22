@@ -60,6 +60,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.input-title {
+    text-align: left;
+}
+
 .secondary-btn {
     font-size: 12px;
     padding: 8px 16px;

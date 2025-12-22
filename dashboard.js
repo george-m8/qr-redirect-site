@@ -70,11 +70,11 @@ async function loadDashboard() {
             </div>
             <div style="flex-grow: 1;">
               <div style="margin-bottom: 10px;">
-                <strong>Slug:</strong> <code>${qr.slug}</code>
+                <strong class="input-title">URL:</strong> <code>${getBaseUrlWrapper()}/r/${qr.slug}</code>
                 <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn" style="margin-left: 10px;">Copy URL</button>
               </div>
               <div style="margin-bottom: 10px;">
-                <strong>Destination:</strong>
+                <strong class="input-title">Destination:</strong>
                 <input 
                   type="text" 
                   id="dest-${qr.slug}" 
