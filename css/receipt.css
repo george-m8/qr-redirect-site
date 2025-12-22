@@ -238,3 +238,68 @@ hr {
     padding-right: 20px;
   }
 }
+
+@media (max-width: 420px) {
+  .receipt-header,
+  .receipt-section,
+  .receipt-content,
+  #auth,
+  .receipt-footer {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .receipt-header {
+    padding-top: 20px;
+    padding-bottom: 15px;
+  }
+  
+  .receipt-footer {
+    padding-top: 15px;
+    padding-bottom: 20px;
+  }
+}
+
+/* Dashboard QR items layout */
+.qr-item-container {
+  display: flex;
+  gap: 20px;
+}
+
+.qr-display-section {
+  flex-shrink: 0;
+}
+
+.qr-info-section {
+  flex-grow: 1;
+}
+
+.qr-field {
+  margin-bottom: 15px;
+}
+
+.url-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.url-actions a {
+  flex-shrink: 1;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+@media (max-width: 624px) {
+  .qr-item-container {
+    flex-direction: column;
+  }
+  
+  .qr-display-section {
+    text-align: center;
+  }
+}

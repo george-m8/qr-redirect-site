@@ -61,19 +61,22 @@ async function loadDashboard() {
       dashboardContent.innerHTML = '<p>No QR codes yet. <a href="/">Create one!</a></p>';
     } else {
       dashboardContent.innerHTML = qrCodes.map(qr => `
-        <div class="qr-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-          <div style="display: flex; gap: 20px;">
-            <div style="flex-shrink: 0;">
+        <div class="qr-item" style="border: 1px dashed #999; padding: 15px; margin-bottom: 15px;">
+          <div class="qr-item-container">
+            <div class="qr-display-section">
               <div id="display-${qr.slug}"></div>
               <br>
               <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download QR</button>
             </div>
-            <div style="flex-grow: 1;">
-              <div style="margin-bottom: 10px;">
-                <strong class="input-title">URL:</strong> <a href="${getBaseUrlWrapper()}/r/${qr.slug}" target="_blank" rel="noopener noreferrer"><code>${getBaseUrlWrapper()}/r/${qr.slug}</code></a>
-                <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn" style="margin-left: 10px;">Copy URL</button>
+            <div class="qr-info-section">
+              <div class="qr-field">
+                <strong class="input-title">URL:</strong>
+                <div class="url-actions">
+                  <a href="${getBaseUrlWrapper()}/r/${qr.slug}" target="_blank" rel="noopener noreferrer"><code>${getBaseUrlWrapper()}/r/${qr.slug}</code></a>
+                  <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn">Copy URL</button>
+                </div>
               </div>
-              <div style="margin-bottom: 10px;">
+              <div class="qr-field">
                 <strong class="input-title">Destination:</strong>
                 <input 
                   type="text" 
