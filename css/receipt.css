@@ -120,17 +120,17 @@ button {
   text-transform: uppercase;
   padding: 12px 24px;
   border: none;
-  /*border-top: 1px dashed #333;
-  border-bottom: 1px dashed #333;*/
+  border-top: 1px dashed #333;
+  border-bottom: 1px dashed #333;
   background: transparent;
   cursor: pointer;
-  /*letter-spacing: 1px;
-  transition: letter-spacing 0.2s;*/
+  letter-spacing: 1px;
+  transition: letter-spacing 0.2s;
 }
 
-/*button:hover {
+button:hover {
   letter-spacing: 2px;
-}*/
+}
 
 button:disabled {
   opacity: 0.5;
@@ -166,16 +166,16 @@ button:disabled {
 a {
   color: #333;
   text-decoration: none;
-  border-top: 1px dashed #333;
+  /*border-top: 1px dashed #333;
   border-bottom: 1px dashed #333;
   letter-spacing: 1px;
   transition: letter-spacing 0.2s;
-  letter-spacing: 2px;
+  letter-spacing: 2px;*/
 }
 
 a:hover {
-  color: #000;
-  border-bottom: 1px solid #000;
+  /*color: #000;
+  border-bottom: 1px solid #000;*/
 }
 
 /* Preserve QR code character rendering */
