@@ -1,0 +1,82 @@
+/* Receipt-style QR Code Rendering */
+
+.qr-display {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 3px;
+  line-height: 3px;
+  letter-spacing: 0;
+  white-space: pre;
+  display: inline-block;
+  padding: 10px;
+  background: #fff;
+  border: 2px dashed #999;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  user-select: none;
+  overflow: hidden;
+}
+
+.qr-display-row {
+  display: block;
+  height: 3px;
+  animation: thermal-print 0.05s ease-out backwards;
+}
+
+/* Thermal printer effect - each row prints sequentially */
+@keyframes thermal-print {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: blur(0);
+  }
+}
+
+/* Stagger the animation for each row */
+.qr-display-row:nth-child(1) { animation-delay: 0.00s; }
+.qr-display-row:nth-child(2) { animation-delay: 0.01s; }
+.qr-display-row:nth-child(3) { animation-delay: 0.02s; }
+.qr-display-row:nth-child(4) { animation-delay: 0.03s; }
+.qr-display-row:nth-child(5) { animation-delay: 0.04s; }
+.qr-display-row:nth-child(6) { animation-delay: 0.05s; }
+.qr-display-row:nth-child(7) { animation-delay: 0.06s; }
+.qr-display-row:nth-child(8) { animation-delay: 0.07s; }
+.qr-display-row:nth-child(9) { animation-delay: 0.08s; }
+.qr-display-row:nth-child(10) { animation-delay: 0.09s; }
+/* Continue pattern for more rows */
+.qr-display-row:nth-child(n+11) { animation-delay: calc(0.01s * var(--row-index, 0)); }
+
+/* Slight thermal fade effect */
+.qr-display::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.05) 100%
+  );
+  pointer-events: none;
+}
+
+/* Dashboard specific sizing */
+.qr-display-small {
+  font-size: 2px;
+  line-height: 2px;
+  padding: 8px;
+}
+
+.qr-display-small .qr-display-row {
+  height: 2px;
+}
+
+/* Hidden canvas for PNG download */
+.qr-canvas-hidden {
+  display: none;
+}

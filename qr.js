@@ -1,5 +1,5 @@
 // Import utility functions
-import { sanitizeForFilename, generateQRFilename, getBaseUrl, copyToClipboard as copyTextToClipboard } from './utils.js';
+import { sanitizeForFilename, generateQRFilename, getBaseUrl, copyToClipboard as copyTextToClipboard, renderQRAsCharacters, generateQRCanvas } from './utils.js';
 
 // Wait for Firebase to load
 if (!window.firebaseAuth) {
@@ -58,7 +58,7 @@ async function loadQRData() {
 
 function displayQRCode() {
   const content = document.getElementById('content');
-  const canvas = document.getElementById('qr-canvas');
+  const canvasContainer = document.getElementById('qr-canvas');
   const redirectUrlEl = document.getElementById('redirect-url-text');
   const redirectUrlLink = document.getElementById('redirect-url');
   const destinationUrlEl = document.getElementById('destination-url-text');
@@ -75,19 +75,15 @@ function displayQRCode() {
   destinationUrlLink.href = currentQRData.destination;
   newDestinationInput.value = currentQRData.destination;
 
-  // Generate QR code
-  QRCode.toCanvas(canvas, shortUrl, {
-    width: 300,
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    }
-  }, (error) => {
-    if (error) {
-      console.error('QR generation error:', error);
-      showError('Failed to generate QR code image.');
-    }
+  // Render QR code as characters for display
+  renderQRAsCharacters(shortUrl, canvasContainer, { size: 'normal' });
+  
+  // Generate hidden canvas for download
+  generateQRCanvas(shortUrl, 300).then(canvas => {
+    canvas.id = 'download-canvas';
+    document.body.appendChild(canvas);
+  }).catch(error => {
+    console.error('Failed to generate download canvas:', error);
   });
 
   content.style.display = 'block';
@@ -206,7 +202,12 @@ function downloadQR() {
     return;
   }
   
-  const canvas = document.getElementById('qr-canvas');
+  const canvas = document.getElementById('download-canvas');
+  if (!canvas) {
+    alert('Download not ready, please wait a moment');
+    return;
+  }
+  
   const filename = generateQRFilename(currentQRData.slug, currentQRData.destination);
   
   const link = document.createElement('a');

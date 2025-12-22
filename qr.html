@@ -8,6 +8,9 @@
   <!-- QR code library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   
+  <!-- QR character rendering styles -->
+  <link rel="stylesheet" href="/css/qr-render.css">
+  
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -58,7 +61,7 @@
 
   <div id="content" style="display: none;">
     <div class="qr-container">
-      <canvas id="qr-canvas"></canvas>
+      <div id="qr-canvas"></div>
       
       <div class="url-section">
         <p><strong>Your Short URL:</strong></p>

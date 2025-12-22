@@ -1,4 +1,4 @@
-import { getBaseUrl, copyToClipboard as copyTextToClipboard, generateQRFilename } from './utils.js';
+import { getBaseUrl, copyToClipboard as copyTextToClipboard, generateQRFilename, renderQRAsCharacters, generateQRCanvas } from './utils.js';
 
 if (!window.firebaseAuth) {
   console.error('Firebase Auth not loaded');
@@ -64,7 +64,7 @@ async function loadDashboard() {
         <div class="qr-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
           <div style="display: flex; gap: 20px;">
             <div style="flex-shrink: 0;">
-              <canvas id="canvas-${qr.slug}" width="150" height="150" style="border: 1px solid #ddd;"></canvas>
+              <div id="display-${qr.slug}"></div>
               <br>
               <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download</button>
             </div>
@@ -93,13 +93,18 @@ async function loadDashboard() {
       `).join('');
       
       // Generate QR codes after DOM is updated
-      qrCodes.forEach(qr => {
-        const canvas = document.getElementById(`canvas-${qr.slug}`);
+      qrCodes.forEach(async qr => {
+        const displayContainer = document.getElementById(`display-${qr.slug}`);
         const shortUrl = `${getBaseUrl()}/r/${qr.slug}`;
-        QRCode.toCanvas(canvas, shortUrl, {
-          width: 150,
-          margin: 1
-        });
+        
+        // Render as characters
+        await renderQRAsCharacters(shortUrl, displayContainer, { size: 'small' });
+        
+        // Generate hidden canvas for download
+        const canvas = await generateQRCanvas(shortUrl, 300);
+        canvas.id = `canvas-${qr.slug}`;
+        canvas.setAttribute('data-slug', qr.slug);
+        document.body.appendChild(canvas);
       });
     }
   } catch (error) {
