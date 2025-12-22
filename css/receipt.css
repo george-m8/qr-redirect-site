@@ -25,6 +25,7 @@ body {
   border-left: 1px dashed #999;
   border-right: 1px dashed #999;
   position: relative;
+  padding:2rem;
 }
 
 /* Site Header */
@@ -46,9 +47,6 @@ body {
 }
 
 .site-logo {
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 3px;
   margin-bottom: 10px;
 }
 
@@ -84,6 +82,7 @@ body {
 
 /* Form styling */
 form {
+  text-align: center;
   margin: 20px 0;
 }
 
@@ -121,17 +120,17 @@ button {
   text-transform: uppercase;
   padding: 12px 24px;
   border: none;
-  border-top: 1px dashed #333;
-  border-bottom: 1px dashed #333;
+  /*border-top: 1px dashed #333;
+  border-bottom: 1px dashed #333;*/
   background: transparent;
   cursor: pointer;
-  letter-spacing: 1px;
-  transition: letter-spacing 0.2s;
+  /*letter-spacing: 1px;
+  transition: letter-spacing 0.2s;*/
 }
 
-button:hover {
+/*button:hover {
   letter-spacing: 2px;
-}
+}*/
 
 button:disabled {
   opacity: 0.5;
@@ -167,7 +166,11 @@ button:disabled {
 a {
   color: #333;
   text-decoration: none;
+  border-top: 1px dashed #333;
   border-bottom: 1px dashed #333;
+  letter-spacing: 1px;
+  transition: letter-spacing 0.2s;
+  letter-spacing: 2px;
 }
 
 a:hover {
