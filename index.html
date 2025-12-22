@@ -15,16 +15,12 @@
 <body>
   <div class="receipt-wrapper">
     <div class="receipt-header">
-      <div class="ascii-border">///////////\\\\\\\\\\\</div>
-      <pre class="site-logo">███████╗ █████╗  ██╗██╗      ██████╗ ██████╗
-██╔════╝██╔══██╗███║██║     ██╔════╝██╔════╝
-███████╗███████║╚██║██║     ██║     ██║
-╚════██║██╔══██║ ██║██║     ██║     ██║
-███████║██║  ██║ ██║███████╗╚██████╗╚██████╗
-╚══════╝╚═╝  ╚═╝ ╚═╝╚══════╝ ╚═════╝ ╚═════╝</pre>
-      <div class="ascii-border">~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+      <pre class="site-logo">        _    _
+     __|_|__|_|__
+   _|____________|__
+  |SAIL.CC o o o o /  
+~'`~'`~'`~'`~'`~'`~'`~</pre>
       <div class="site-description">generate and manage short qr redirect links</div>
-      <div class="ascii-border">*-.,.-*-.,.-*-.,.-*-.,.-*</div>
     </div>
 
     <div id="auth">
@@ -34,8 +30,6 @@
       </a>
       <span id="user-info"></span>
     </div>
-
-    <div class="ascii-divider">═════════════════════════════</div>
 
     <div class="receipt-section">
       <div class="section-title">━━━ generate qr code ━━━</div>
@@ -54,28 +48,28 @@
       </form>
     </div>
 
-    <div class="ascii-divider">##########################</div>
-
     <div id="output" style="display:none;">
-      <div class="ascii-divider">~*`*~.,.~*`*~.,.~*`*~.,.~*`*~</div>
-      <div class="section-title">━━━ qr code ready ━━━</div>
-      <p>
-        short link:<br />
-        <a href="" target="_blank" rel="noopener noreferrer"><code id="redirect-url"></code></a>
-      </p>
+      <div class="receipt-section">
+        <div class="section-title">━━━ qr code ready ━━━</div>
+        <p>
+          short link:<br />
+          <a href="" target="_blank" rel="noopener noreferrer"><code id="redirect-url"></code></a>
+        </p>
 
-      <p>
-        destination:<br />
-        <a href="" target="_blank" rel="noopener noreferrer"><code id="destination-url"></code></a>
-      </p>
+        <p>
+          destination:<br />
+          <a href="" target="_blank" rel="noopener noreferrer"><code id="destination-url"></code></a>
+        </p>
 
-      <canvas id="qr-canvas"></canvas>
+        <canvas id="qr-canvas"></canvas>
 
-      <br /><br />
+        <br /><br />
 
-      <button id="download">download png</button>
-      <div class="ascii-divider" style="margin-top: 20px;">~*`*~.,.~*`*~.,.~*`*~.,.~*`*~</div>
+        <button id="download">download png</button>
+      </div>
     </div>
+
+    <div class="receipt-footer"></div>
   </div>
 
 

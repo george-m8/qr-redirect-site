@@ -20,36 +20,29 @@ body {
   background: #fff;
   width: 100%;
   max-width: 600px;
-  padding: 30px;
+  padding: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-left: 1px dashed #999;
   border-right: 1px dashed #999;
   position: relative;
 }
 
-/* Receipt edges */
-.receipt-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 10px;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 10px,
-    #ddd 10px,
-    #ddd 11px
-  );
-}
-
 /* Site Header */
 .receipt-header {
   text-align: center;
-  border-bottom: 2px dashed #333;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
+  border-top: 3px solid #333;
+  border-bottom: 1px dashed #999;
+  padding: 30px 30px 20px 30px;
+}
+
+.receipt-header::before {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .site-logo {
@@ -57,13 +50,6 @@ body {
   font-weight: bold;
   letter-spacing: 3px;
   margin-bottom: 10px;
-}
-
-.ascii-border {
-  font-size: 12px;
-  line-height: 1.2;
-  color: #666;
-  margin: 10px 0;
 }
 
 .site-description {
@@ -75,13 +61,16 @@ body {
 
 /* Content sections */
 .receipt-section {
-  margin: 30px 0;
-  padding: 20px 0;
-  border-top: 1px dashed #ccc;
+  padding: 30px;
+  border-top: 1px dashed #999;
 }
 
 .receipt-section:first-child {
   border-top: none;
+}
+
+.receipt-content {
+  padding: 30px;
 }
 
 .section-title {
@@ -128,18 +117,20 @@ input:focus {
 button {
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
+  font-weight: bold;
   text-transform: uppercase;
   padding: 12px 24px;
-  border: 2px solid #333;
-  background: #fff;
+  border: none;
+  border-top: 1px dashed #333;
+  border-bottom: 1px dashed #333;
+  background: transparent;
   cursor: pointer;
   letter-spacing: 1px;
-  transition: all 0.2s;
+  transition: letter-spacing 0.2s;
 }
 
 button:hover {
-  background: #333;
-  color: #fff;
+  letter-spacing: 2px;
 }
 
 button:disabled {
@@ -150,9 +141,8 @@ button:disabled {
 /* Auth section */
 #auth {
   text-align: center;
-  padding: 15px 0;
-  border-bottom: 1px dashed #ccc;
-  margin-bottom: 20px;
+  padding: 15px 30px;
+  border-bottom: 1px dashed #999;
 }
 
 #auth button {
@@ -167,13 +157,10 @@ button:disabled {
   margin-left: 10px;
 }
 
-/* Decorative ASCII dividers */
-.ascii-divider {
-  text-align: center;
-  font-size: 14px;
-  margin: 20px 0;
+#user-info::before {
+  content: 'logged in as: ';
+  text-transform: lowercase;
   color: #999;
-  letter-spacing: 1px;
 }
 
 /* Links */
@@ -223,14 +210,40 @@ hr {
   font-size: 11px;
 }
 
+/* Receipt footer */
+.receipt-footer {
+  border-top: 1px dashed #999;
+  border-bottom: 3px solid #333;
+  padding: 20px 30px 30px 30px;
+  text-align: center;
+}
+
+.receipt-footer::after {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
 /* Responsive */
 @media (max-width: 650px) {
   .receipt-wrapper {
     max-width: 100%;
-    padding: 20px;
   }
   
   .site-logo {
     font-size: 20px;
+  }
+  
+  .receipt-header,
+  .receipt-section,
+  .receipt-content,
+  #auth,
+  .receipt-footer {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }

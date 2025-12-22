@@ -3,21 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generating your QR code...</title>
+  <title>SA1L.CC - generating qr code...</title>
+  <link rel="stylesheet" href="/css/receipt.css">
 </head>
 <body>
-  <h1>🎉 Your QR Code is Ready!</h1>
-  
-  <div class="ad-container">
-    <div class="spinner"></div>
-    <p class="message">Please wait a moment...</p>
-    <div class="countdown" id="countdown">5</div>
-    <p class="message">Redirecting to your QR code</p>
-    
-    <!-- Placeholder for future ad content -->
-    <div style="margin-top: 40px; padding: 20px; background: #fff; border-radius: 5px;">
-      <p style="color: #999; font-size: 14px;">[ Ad Space - Coming Soon ]</p>
+  <div class="receipt-wrapper">
+    <div class="receipt-header">
+      <pre class="site-logo">███████╗ █████╗  ██╗██╗      ██████╗ ██████╗
+██╔════╝██╔══██╗███║██║     ██╔════╝██╔════╝
+███████╗███████║╚██║██║     ██║     ██║
+╚════██║██╔══██║ ██║██║     ██║     ██║
+███████║██║  ██║ ██║███████╗╚██████╗╚██████╗
+╚══════╝╚═╝  ╚═╝ ╚═╝╚══════╝ ╚═════╝ ╚═════╝</pre>
+      <div class="site-description">generate and manage short qr redirect links</div>
     </div>
+  
+    <div class="receipt-section" style="text-align: center;">
+      <div class="section-title">━━━ generating your qr code ━━━</div>
+      <p style="margin: 40px 0;">please wait a moment...</p>
+      <div id="countdown" style="font-size: 48px; font-weight: bold; margin: 20px 0;">5</div>
+      <p style="color: #666;">redirecting to your qr code</p>
+    </div>
+
+    <div class="receipt-footer"></div>
   </div>
 
   <script>
