@@ -60,7 +60,7 @@ body {
 /* Content sections */
 .receipt-section {
   padding: 30px;
-  border-top: 1px dashed #999;
+  /*border-top: 1px dashed #999;*/
 }
 
 .receipt-section:first-child {
