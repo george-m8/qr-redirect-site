@@ -119,16 +119,26 @@ button {
   background: transparent;
   cursor: pointer;
   letter-spacing: 1px;
-  transition: letter-spacing 0.2s;
+  transition: all 0.2s ease;
 }
 
 button:hover {
   letter-spacing: 2px;
+  border-top: 2px dashed #333;
+  border-bottom: 2px dashed #333;
+  font-weight: 900;
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+button:disabled:hover {
+  letter-spacing: 1px;
+  border-top: 1px dashed #333;
+  border-bottom: 1px dashed #333;
+  font-weight: bold;
 }
 
 /* Auth section */
@@ -166,16 +176,15 @@ button:disabled {
 a {
   color: #333;
   text-decoration: none;
-  /*border-top: 1px dashed #333;
   border-bottom: 1px dashed #333;
-  letter-spacing: 1px;
-  transition: letter-spacing 0.2s;
-  letter-spacing: 2px;*/
+  transition: all 0.2s ease;
+  display: inline-block;
 }
 
 a:hover {
-  /*color: #000;
-  border-bottom: 1px solid #000;*/
+  border-bottom: 2px dashed #000;
+  color: #000;
+  font-weight: bold;
 }
 
 /* Preserve QR code character rendering */
