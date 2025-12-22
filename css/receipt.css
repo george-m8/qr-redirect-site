@@ -1,0 +1,236 @@
+/* Receipt Paper Style */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #e8e8e8;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.receipt-wrapper {
+  background: #fff;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-left: 1px dashed #999;
+  border-right: 1px dashed #999;
+  position: relative;
+}
+
+/* Receipt edges */
+.receipt-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10px,
+    #ddd 10px,
+    #ddd 11px
+  );
+}
+
+/* Site Header */
+.receipt-header {
+  text-align: center;
+  border-bottom: 2px dashed #333;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.site-logo {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.ascii-border {
+  font-size: 12px;
+  line-height: 1.2;
+  color: #666;
+  margin: 10px 0;
+}
+
+.site-description {
+  font-size: 12px;
+  color: #666;
+  text-transform: lowercase;
+  margin-top: 10px;
+}
+
+/* Content sections */
+.receipt-section {
+  margin: 30px 0;
+  padding: 20px 0;
+  border-top: 1px dashed #ccc;
+}
+
+.receipt-section:first-child {
+  border-top: none;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Form styling */
+form {
+  margin: 20px 0;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed #999;
+  background: #fafafa;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+input:focus {
+  outline: none;
+  border: 1px dashed #333;
+  background: #fff;
+}
+
+button {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border: 2px solid #333;
+  background: #fff;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: #333;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Auth section */
+#auth {
+  text-align: center;
+  padding: 15px 0;
+  border-bottom: 1px dashed #ccc;
+  margin-bottom: 20px;
+}
+
+#auth button {
+  font-size: 12px;
+  padding: 8px 16px;
+  margin: 0 5px;
+}
+
+#user-info {
+  font-size: 12px;
+  color: #666;
+  margin-left: 10px;
+}
+
+/* Decorative ASCII dividers */
+.ascii-divider {
+  text-align: center;
+  font-size: 14px;
+  margin: 20px 0;
+  color: #999;
+  letter-spacing: 1px;
+}
+
+/* Links */
+a {
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px dashed #333;
+}
+
+a:hover {
+  color: #000;
+  border-bottom: 1px solid #000;
+}
+
+/* Preserve QR code character rendering */
+.qr-display,
+.qr-display-small {
+  /* Keep existing styles from qr-render.css */
+}
+
+/* HR styling */
+hr {
+  border: none;
+  border-top: 1px dashed #ccc;
+  margin: 30px 0;
+}
+
+/* Output section */
+#output {
+  text-align: center;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px dashed #999;
+  margin: 20px 0;
+}
+
+#output p {
+  margin: 10px 0;
+  font-size: 12px;
+}
+
+#output code {
+  background: #fff;
+  padding: 5px 10px;
+  border: 1px dashed #ccc;
+  display: inline-block;
+  font-size: 11px;
+}
+
+/* Responsive */
+@media (max-width: 650px) {
+  .receipt-wrapper {
+    max-width: 100%;
+    padding: 20px;
+  }
+  
+  .site-logo {
+    font-size: 20px;
+  }
+}

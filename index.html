@@ -2,64 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Generator (Local)</title>
+  <title>SA1L.CC - qr code generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- QR code library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   
-  <!-- Auth modal styles -->
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/receipt.css">
   <link rel="stylesheet" href="/css/auth-modal.css">
 </head>
 <body>
-  <h1>QR Code Generator</h1>
+  <div class="receipt-wrapper">
+    <div class="receipt-header">
+      <div class="ascii-border">///////////\\\\\\\\\\\</div>
+      <pre class="site-logo">███████╗ █████╗  ██╗██╗      ██████╗ ██████╗
+██╔════╝██╔══██╗███║██║     ██╔════╝██╔════╝
+███████╗███████║╚██║██║     ██║     ██║
+╚════██║██╔══██║ ██║██║     ██║     ██║
+███████║██║  ██║ ██║███████╗╚██████╗╚██████╗
+╚══════╝╚═╝  ╚═╝ ╚═╝╚══════╝ ╚═════╝ ╚═════╝</pre>
+      <div class="ascii-border">~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+      <div class="site-description">generate and manage short qr redirect links</div>
+      <div class="ascii-border">*-.,.-*-.,.-*-.,.-*-.,.-*</div>
+    </div>
 
-  <div id="auth">
-    <button id="logout">Log out</button>
-    <a id="dashboard-link" href="/dashboard.html" style="display:none; margin-left: 15px;">
-      <button>See & Edit My QR Codes</button>
-    </a>
-    <span id="user-info"></span>
-  </div>
+    <div id="auth">
+      <button id="logout">Log out</button>
+      <a id="dashboard-link" href="/dashboard.html" style="display:none; margin-left: 15px;">
+        <button>dashboard</button>
+      </a>
+      <span id="user-info"></span>
+    </div>
 
-  <hr />
+    <div class="ascii-divider">═════════════════════════════</div>
 
-  <form id="qr-form">
-    <label>
-      Destination URL<br />
-      <input
-        type="text"
-        id="destination"
-        placeholder="https://example.com"
-        required
-      />
-    </label>
+    <div class="receipt-section">
+      <div class="section-title">━━━ generate qr code ━━━</div>
+      <form id="qr-form">
+        <label>
+          destination url
+          <input
+            type="text"
+            id="destination"
+            placeholder="https://example.com"
+            required
+          />
+        </label>
 
-    <br /><br />
+        <button type="submit">generate qr</button>
+      </form>
+    </div>
 
-    <button type="submit">Generate QR</button>
-  </form>
+    <div class="ascii-divider">##########################</div>
 
-  <hr />
+    <div id="output" style="display:none;">
+      <div class="ascii-divider">~*`*~.,.~*`*~.,.~*`*~.,.~*`*~</div>
+      <div class="section-title">━━━ qr code ready ━━━</div>
+      <p>
+        short link:<br />
+        <a href="" target="_blank" rel="noopener noreferrer"><code id="redirect-url"></code></a>
+      </p>
 
-  <div id="output" style="display:none;">
-    <p>
-      QR Code Content:<br />
-      <a href="" target="_blank" rel="noopener noreferrer"><code id="redirect-url"></code></a>
-    </p>
-    <span>(click to test)</span>
+      <p>
+        destination:<br />
+        <a href="" target="_blank" rel="noopener noreferrer"><code id="destination-url"></code></a>
+      </p>
 
-    <p>
-      Destination URL:<br />
-      <a href="" target="_blank" rel="noopener noreferrer"><code id="destination-url"></code></a>
-    </p>
-    <span>(click to test)</span>
+      <canvas id="qr-canvas"></canvas>
 
-    <canvas id="qr-canvas"></canvas>
+      <br /><br />
 
-    <br /><br />
-
-    <button id="download">Download PNG</button>
+      <button id="download">download png</button>
+      <div class="ascii-divider" style="margin-top: 20px;">~*`*~.,.~*`*~.,.~*`*~.,.~*`*~</div>
+    </div>
   </div>
 
 
