@@ -1,3 +1,6 @@
+// Import utility functions
+import { sanitizeForFilename, generateQRFilename, getBaseUrl, copyToClipboard as copyTextToClipboard } from './utils.js';
+
 // Wait for Firebase to load
 if (!window.firebaseAuth) {
   console.error('Firebase Auth not loaded');
@@ -45,7 +48,6 @@ async function loadQRData() {
     }
 
     displayQRCode();
-    checkAuthForEditing();
   } catch (error) {
     console.error('Error loading QR data:', error);
     showError(error.message || 'Failed to load QR code. Please try again.');
@@ -180,26 +182,23 @@ function copyToClipboard(type) {
     ? document.getElementById('redirect-url-text').textContent
     : document.getElementById('destination-url-text').textContent;
   
-  navigator.clipboard.writeText(text).then(() => {
-    alert('Copied to clipboard!');
-  }).catch(() => {
-    alert('Failed to copy to clipboard');
+  copyTextToClipboard(text).then((success) => {
+    if (success) {
+      alert('Copied to clipboard!');
+    } else {
+      alert('Failed to copy to clipboard');
+    }
   });
 }
 
 function downloadQR() {
   const canvas = document.getElementById('qr-canvas');
+  const filename = generateQRFilename(currentQRData.slug, currentQRData.destination);
+  
   const link = document.createElement('a');
-  link.download = `qr-${currentQRData.slug}.png`;
+  link.download = filename;
   link.href = canvas.toDataURL('image/png');
   link.click();
-}
-
-function getBaseUrl() {
-  if (window.location.protocol === 'file:') {
-    return 'https://example.com';
-  }
-  return `${window.location.protocol}//${window.location.host}`;
 }
 
 function showError(message) {

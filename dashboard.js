@@ -1,3 +1,5 @@
+import { getBaseUrl, copyToClipboard as copyTextToClipboard } from './utils.js';
+
 if (!window.firebaseAuth) {
   console.error('Firebase Auth not loaded');
   window.location.href = '/';
@@ -62,7 +64,7 @@ async function loadDashboard() {
         <div class="qr-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
           <div style="margin-bottom: 10px;">
             <strong>Slug:</strong> <code>${qr.slug}</code>
-            <button onclick="copyToClipboard('${getBaseUrl()}/r/${qr.slug}')" style="margin-left: 10px;">Copy URL</button>
+            <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" style="margin-left: 10px;">Copy URL</button>
           </div>
           <div style="margin-bottom: 10px;">
             <strong>Destination:</strong>
@@ -85,13 +87,6 @@ async function loadDashboard() {
     console.error('Failed to load dashboard:', error);
     dashboardContent.innerHTML = '<p style="color: red;">Failed to load QR codes. Please refresh.</p>';
   }
-}
-
-function getBaseUrl() {
-  if (window.location.protocol === 'file:') {
-    return 'https://example.com';
-  }
-  return `${window.location.protocol}//${window.location.host}`;
 }
 
 async function updateDestination(slug) {
@@ -144,13 +139,20 @@ async function updateDestination(slug) {
 }
 
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    alert('URL copied to clipboard!');
-  }).catch(() => {
-    alert('Failed to copy URL');
+  copyTextToClipboard(text).then((success) => {
+    if (success) {
+      alert('URL copied to clipboard!');
+    } else {
+      alert('Failed to copy URL');
+    }
   });
+}
+
+function getBaseUrlWrapper() {
+  return getBaseUrl();
 }
 
 // Make functions globally available
 window.updateDestination = updateDestination;
 window.copyToClipboard = copyToClipboard;
+window.getBaseUrlWrapper = getBaseUrlWrapper;
