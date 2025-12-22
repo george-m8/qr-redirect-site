@@ -141,6 +141,14 @@ button:disabled {
   justify-content: center;
 }
 
+.auth-buttons-flex {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-content: center;
+    align-items: center;
+}
+
 #auth button {
   font-size: 12px;
   padding: 8px 16px;
@@ -259,6 +267,10 @@ hr {
   .receipt-footer {
     padding-top: 15px;
     padding-bottom: 20px;
+  }
+
+  .auth-buttons-flex {
+    flex-direction: column;
   }
 }
 
