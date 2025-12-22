@@ -7,21 +7,14 @@
 
   <!-- QR code library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  
+  <!-- Auth modal styles -->
+  <link rel="stylesheet" href="/css/auth-modal.css">
 </head>
 <body>
   <h1>QR Code Generator</h1>
 
   <div id="auth">
-    <button id="login-google">Log in with Google</button>
-    <button id="login-github">Log in with GitHub</button>
-
-    <div>
-      <input id="email" type="email" placeholder="email" />
-      <input id="password" type="password" placeholder="password" />
-      <button id="login-email">Email login</button>
-      <button id="signup-email">Email sign up</button>
-    </div>
-
     <button id="logout" style="display:none;">Log out</button>
     <a id="dashboard-link" href="/dashboard.html" style="display:none; margin-left: 15px;">
       <button>See & Edit My QR Codes</button>
@@ -109,6 +102,29 @@
     };
   </script>
 
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="auth-modal">
+    <div class="auth-modal-content">
+      <button id="auth-modal-close" class="auth-modal-close">&times;</button>
+      <h2>━━━ Login ━━━</h2>
+      
+      <div class="auth-buttons">
+        <button id="modal-login-google">Log in with Google</button>
+        <button id="modal-login-github">Log in with GitHub</button>
+      </div>
+      
+      <div class="auth-email-section">
+        <input id="modal-email" type="email" placeholder="Email" />
+        <input id="modal-password" type="password" placeholder="Password" />
+        <div class="auth-email-buttons">
+          <button id="modal-login-email">Login</button>
+          <button id="modal-signup-email">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="auth-modal.js"></script>
   <script src="script.js" defer></script>
 </body>
 </html>

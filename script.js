@@ -6,100 +6,38 @@ if (!window.firebaseAuth) {
   const {
     auth,
     onAuthStateChanged,
-    signInWithPopup,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signOut,
-    GoogleAuthProvider,
-    GithubAuthProvider
+    signOut
   } = window.firebaseAuth;
+
+  // Import and initialize auth modal
+  import('./auth-modal.js').then(({ initAuthModal, setupModalAuth, openAuthModal }) => {
+    initAuthModal();
+    setupModalAuth(window.firebaseAuth);
+    
+    // Make openAuthModal available for button onclick
+    window.openAuthModal = openAuthModal;
+  });
 
   // Get form elements that need to be enabled/disabled
   const destinationInput = document.getElementById('destination');
   const submitButton = document.querySelector('#qr-form button[type="submit"]');
 
-  // Disable form until logged in
+  // Initially set button to login mode
+  if (submitButton) {
+    submitButton.textContent = 'Login to Generate QR';
+    submitButton.type = 'button'; // Prevent form submission
+    submitButton.onclick = () => window.openAuthModal();
+  }
   if (destinationInput) destinationInput.disabled = true;
-  if (submitButton) submitButton.disabled = true;
 
   // UI elements
-  const loginGoogleBtn = document.getElementById('login-google');
-  const loginGithubBtn = document.getElementById('login-github');
-  const loginEmailBtn = document.getElementById('login-email');
-  const signupEmailBtn = document.getElementById('signup-email');
   const logoutBtn = document.getElementById('logout');
   const dashboardLink = document.getElementById('dashboard-link');
   const userInfo = document.getElementById('user-info');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
 
-  console.log('Auth buttons found:', {
-    loginGoogleBtn: !!loginGoogleBtn,
-    loginGithubBtn: !!loginGithubBtn,
-    loginEmailBtn: !!loginEmailBtn
-  });
+  console.log('Auth setup complete');
 
-  // Google
-  loginGoogleBtn?.addEventListener('click', async () => {
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      alert('Failed to sign in with Google');
-    }
-  });
-
-  // GitHub
-  loginGithubBtn?.addEventListener('click', async () => {
-    try {
-      await signInWithPopup(auth, new GithubAuthProvider());
-    } catch (error) {
-      console.error('GitHub sign-in error:', error);
-      alert('Failed to sign in with GitHub');
-    }
-  });
-
-  // Email login
-  loginEmailBtn?.addEventListener('click', async () => {
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        emailInput.value,
-        passwordInput.value
-      );
-    } catch (error) {
-      console.error('Email sign-in error:', error);
-      alert('Failed to sign in with email');
-    }
-  });
-
-  // Email signup
-  signupEmailBtn?.addEventListener('click', async () => {
-    try {
-      await createUserWithEmailAndPassword(
-        auth,
-        emailInput.value,
-        passwordInput.value
-      );
-    } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        // Auto-login if email already exists
-        try {
-          await signInWithEmailAndPassword(
-            auth,
-            emailInput.value,
-            passwordInput.value
-          );
-        } catch (loginError) {
-          console.error('Auto-login failed:', loginError);
-          alert('Email already in use. Please use correct password.');
-        }
-      } else {
-        console.error('Email signup error:', error);
-        alert(error.message || 'Failed to sign up with email');
-      }
-    }
-  });
+  console.log('Auth setup complete');
 
   // Logout
   logoutBtn?.addEventListener('click', async () => {
@@ -114,34 +52,34 @@ if (!window.firebaseAuth) {
   // Auth state listener
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      if (loginGoogleBtn) loginGoogleBtn.style.display = 'none';
-      if (loginGithubBtn) loginGithubBtn.style.display = 'none';
-      if (loginEmailBtn) loginEmailBtn.style.display = 'none';
-      if (signupEmailBtn) signupEmailBtn.style.display = 'none';
       if (logoutBtn) logoutBtn.style.display = 'inline-block';
       if (dashboardLink) dashboardLink.style.display = 'inline-block';
 
       if (userInfo) userInfo.textContent = user.email || user.uid;
 
-      // Enable form fields
+      // Enable form fields and change button to submit mode
       if (destinationInput) destinationInput.disabled = false;
-      if (submitButton) submitButton.disabled = false;
+      if (submitButton) {
+        submitButton.textContent = 'Generate QR';
+        submitButton.type = 'submit';
+        submitButton.onclick = null; // Remove modal opener, let form submit naturally
+      }
 
       // Store user object to get fresh tokens on demand
       window.firebaseUser = user;
     } else {
-      if (loginGoogleBtn) loginGoogleBtn.style.display = 'inline-block';
-      if (loginGithubBtn) loginGithubBtn.style.display = 'inline-block';
-      if (loginEmailBtn) loginEmailBtn.style.display = 'inline-block';
-      if (signupEmailBtn) signupEmailBtn.style.display = 'inline-block';
       if (logoutBtn) logoutBtn.style.display = 'none';
       if (dashboardLink) dashboardLink.style.display = 'none';
 
       if (userInfo) userInfo.textContent = '';
       
-      // Disable form fields
+      // Disable form fields and change button to login mode
       if (destinationInput) destinationInput.disabled = true;
-      if (submitButton) submitButton.disabled = true;
+      if (submitButton) {
+        submitButton.textContent = 'Login to Generate QR';
+        submitButton.type = 'button';
+        submitButton.onclick = () => window.openAuthModal();
+      }
       
       window.firebaseUser = null;
     }
