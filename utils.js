@@ -50,8 +50,9 @@ export async function renderQRAsCharacters(text, container, options = {}) {
         const pixelIndex = (y * tempCanvas.width + x) * 4;
         
         // Check if pixel is dark (RGB close to 0)
+        // Use double blocks (██) for square appearance in monospace
         const isDark = data[pixelIndex] < 128;
-        rowHtml += isDark ? '█' : ' ';
+        rowHtml += isDark ? '██' : '  ';
       }
       html += `<span class="qr-display-row" style="--row-index: ${row}">${rowHtml}</span>`;
     }
