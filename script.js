@@ -45,20 +45,26 @@ if (!window.firebaseAuth) {
 
   console.log('Auth setup complete');
 
-  // Logout
+  // Logout/Login button handler
   logoutBtn?.addEventListener('click', async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error('Sign-out error:', error);
-      alert('Failed to sign out');
+    if (window.firebaseUser) {
+      // User is logged in, log them out
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Sign-out error:', error);
+        alert('Failed to sign out');
+      }
+    } else {
+      // User is logged out, open login modal
+      window.openAuthModal?.();
     }
   });
 
   // Auth state listener
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      if (logoutBtn) logoutBtn.style.display = 'inline-block';
+      if (logoutBtn) logoutBtn.textContent = 'Log out';
       if (dashboardLink) dashboardLink.style.display = 'inline-block';
 
       if (userInfo) userInfo.textContent = user.email || user.uid;
@@ -74,7 +80,7 @@ if (!window.firebaseAuth) {
       // Store user object to get fresh tokens on demand
       window.firebaseUser = user;
     } else {
-      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (logoutBtn) logoutBtn.textContent = 'Login';
       if (dashboardLink) dashboardLink.style.display = 'none';
 
       if (userInfo) userInfo.textContent = '';
