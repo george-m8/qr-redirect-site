@@ -67,7 +67,7 @@ if (!window.firebaseAuth) {
       if (logoutBtn) logoutBtn.textContent = 'Log out';
       if (dashboardLink) dashboardLink.style.display = 'inline-block';
 
-      if (userInfo) userInfo.textContent = user.email || user.uid;
+      if (userInfo) userInfo.textContent = 'logged in as: ' + (user.email || user.uid);
 
       // Enable form fields and change button to submit mode
       if (destinationInput) destinationInput.disabled = false;

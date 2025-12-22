@@ -156,12 +156,6 @@ button:disabled {
   margin-left: 10px;
 }
 
-#user-info::before {
-  content: 'logged in as: ';
-  text-transform: lowercase;
-  color: #999;
-}
-
 /* Links */
 a {
   color: #333;
