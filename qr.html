@@ -56,12 +56,8 @@
 <body>
   <div class="receipt-wrapper">
     <div class="receipt-header">
-      <pre class="site-logo">███████╗ █████╗  ██╗██╗      ██████╗ ██████╗
-██╔════╝██╔══██╗███║██║     ██╔════╝██╔════╝
-███████╗███████║╚██║██║     ██║     ██║
-╚════██║██╔══██║ ██║██║     ██║     ██║
-███████║██║  ██║ ██║███████╗╚██████╗╚██████╗
-╚══════╝╚═╝  ╚═╝ ╚═╝╚══════╝ ╚═════╝ ╚═════╝</pre>
+      <pre class="site-logo"></pre>
+      <h1 class="site-logo-text">SA1L.CC</h1>
       <div class="site-description">generate and manage short qr redirect links</div>
     </div>
 
@@ -86,6 +82,9 @@
         <div class="section-title">━━━ your qr code ━━━</div>
         <div id="qr-canvas" style="text-align: center; margin: 20px 0;"></div>
         <p class="small-text" style="text-align: center;">(scan to test)</p>
+        <div style="text-align: center; margin-top: 15px;">
+          <button onclick="downloadQR()">download qr code</button>
+        </div>
       </div>
       
       <div class="receipt-section">
@@ -113,8 +112,8 @@
           <p>⚠️ please <a href="/">log in</a> to edit this qr code's destination.</p>
         </div>
         <div id="edit-form" style="display: none;">
-          <p><small>change where this qr code redirects to:</small></p>
-          <p class="small-text light-text"><small>(you can do this at any time by logging in again later)</small></p>
+          <p class="small-text">change where this qr code redirects to:</p>
+          <p class="small-text light-text">(you can do this at any time by logging in again later)</p>
           <input type="text" id="new-destination" placeholder="https://new-destination.com" />
           <br><br>
           <button id="save-btn" onclick="updateDestination()">update destination</button>
