@@ -179,9 +179,16 @@ a {
   border-bottom: 1px dashed #333;
   transition: all 0.2s ease;
   display: inline-block;
+  -webkit-tap-highlight-color: transparent;
 }
 
-a:hover {
+a:link,
+a:visited {
+  color: #333;
+}
+
+a:hover,
+a:active {
   border-bottom: 2px dashed #000;
   color: #000;
   font-weight: bold;
