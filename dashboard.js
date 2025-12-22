@@ -66,12 +66,12 @@ async function loadDashboard() {
             <div style="flex-shrink: 0;">
               <div id="display-${qr.slug}"></div>
               <br>
-              <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download</button>
+              <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download QR</button>
             </div>
             <div style="flex-grow: 1;">
               <div style="margin-bottom: 10px;">
                 <strong>Slug:</strong> <code>${qr.slug}</code>
-                <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" style="margin-left: 10px;">Copy URL</button>
+                <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn" style="margin-left: 10px;">Copy URL</button>
               </div>
               <div style="margin-bottom: 10px;">
                 <strong>Destination:</strong>
@@ -79,12 +79,11 @@ async function loadDashboard() {
                   type="text" 
                   id="dest-${qr.slug}" 
                   value="${qr.destination}" 
-                  style="width: 70%; padding: 5px;"
                 />
-                <button onclick="updateDestination('${qr.slug}')" style="margin-left: 10px;">Save</button>
+                <button onclick="updateDestination('${qr.slug}')" class="secondary-btn">Update destination</button>
                 <span id="status-${qr.slug}" style="margin-left: 10px; color: green;"></span>
               </div>
-              <div style="font-size: 0.9em; color: #666;">
+              <div class="small-text">
                 Created: ${new Date(qr.created_at).toLocaleString()}
               </div>
             </div>
