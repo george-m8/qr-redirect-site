@@ -36,7 +36,16 @@ if (!window.firebaseAuth) {
     submitButton.type = 'button'; // Prevent form submission
     submitButton.onclick = () => window.openAuthModal();
   }
-  if (destinationInput) destinationInput.disabled = true;
+  if (destinationInput) {
+    destinationInput.disabled = true;
+    
+    // Open modal when user clicks disabled input
+    destinationInput.addEventListener('click', () => {
+      if (destinationInput.disabled && window.openAuthModal) {
+        window.openAuthModal();
+      }
+    });
+  }
 
   // UI elements
   const logoutBtn = document.getElementById('logout');
