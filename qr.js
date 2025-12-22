@@ -151,10 +151,18 @@ async function updateDestination() {
 
     if (!response.ok) {
       const error = await response.json();
+      console.error('API error response:', error);
       throw new Error(error.error || 'Failed to update destination');
     }
 
     const result = await response.json();
+    console.log('Update result:', result);
+    
+    if (!result.qrCode || !result.qrCode.destination) {
+      console.error('Invalid response structure:', result);
+      throw new Error('Invalid response from server');
+    }
+    
     currentQRData.destination = result.qrCode.destination;
 
     // Update the displayed destination
