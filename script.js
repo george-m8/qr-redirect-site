@@ -37,8 +37,6 @@ if (!window.firebaseAuth) {
 
   console.log('Auth setup complete');
 
-  console.log('Auth setup complete');
-
   // Logout
   logoutBtn?.addEventListener('click', async () => {
     try {
@@ -84,143 +82,142 @@ if (!window.firebaseAuth) {
       window.firebaseUser = null;
     }
   });
-}
 
+  // Form setup
+  const form = document.getElementById('qr-form');
+  const output = document.getElementById('output')
+  const redirectUrlEl = document.getElementById('redirect-url');
+  const redirectUrlLink = redirectUrlEl?.parentElement;
+  const canvas = document.getElementById('qr-canvas');
+  const downloadBtn = document.getElementById('download');
+  const destinationUrlEl = document.getElementById('destination-url');
+  const destinationUrlLink = destinationUrlEl?.parentElement;
+  const baseUrl = getBaseUrl();
+  let currentDestination = '';
+  let currentSlug = '';
 
-const form = document.getElementById('qr-form')
-    const destinationInput = document.getElementById('destination')
-    const output = document.getElementById('output')
-    const redirectUrlEl = document.getElementById('redirect-url')
-    const redirectUrlLink = redirectUrlEl.parentElement
-    const canvas = document.getElementById('qr-canvas')
-    const downloadBtn = document.getElementById('download')
-    const destinationUrlEl = document.getElementById('destination-url')
-    const destinationUrlLink = destinationUrlEl.parentElement
-    const baseUrl = getBaseUrl()
-    let currentDestination = ''
-    let currentSlug = ''
+  function getBaseUrl() {
+    if (window.location.protocol === 'file:') {
+      // local dev fallback
+      return 'https://example.com';
+    }
+    return `${window.location.protocol}//${window.location.host}`;
+  }
 
-    function getBaseUrl() {
-        if (window.location.protocol === 'file:') {
-            // local dev fallback
-            return 'https://example.com'
-        }
-        return `${window.location.protocol}//${window.location.host}`
+  function normaliseDestination(input) {
+    let value = input.trim();
+
+    if (!value) return null;
+
+    // If protocol is missing, default to https
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(value)) {
+      value = 'https://' + value;
     }
 
-    function normaliseDestination(input) {
-        let value = input.trim()
+    try {
+      const url = new URL(value);
 
-        if (!value) return null
-
-        // If protocol is missing, default to https
-        if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(value)) {
-            value = 'https://' + value
-        }
-
-        try {
-            const url = new URL(value)
-
-            // Optional: block non-http(s) schemes
-            if (!['http:', 'https:'].includes(url.protocol)) {
-            return null
-            }
-
-            return url.toString()
-        } catch {
-            return null
-        }
-    }
-
-    function generateSlug() {
-      return Math.random().toString(36).substring(2, 8)
-    }
-
-    function sanitizeForFilename(url) {
-      try {
-        const urlObj = new URL(url)
-        return urlObj.hostname.replace(/\./g, '-') + urlObj.pathname.replace(/\//g, '-').replace(/^-+|-+$/g, '')
-      } catch {
-        return url.replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '')
+      // Optional: block non-http(s) schemes
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        return null;
       }
+
+      return url.toString();
+    } catch {
+      return null;
+    }
+  }
+
+  function generateSlug() {
+    return Math.random().toString(36).substring(2, 8);
+  }
+
+  function sanitizeForFilename(url) {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname.replace(/\./g, '-') + urlObj.pathname.replace(/\//g, '-').replace(/^-+|-+$/g, '');
+    } catch {
+      return url.replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const rawDestination = destinationInput.value;
+    const destination = normaliseDestination(rawDestination);
+
+    if (!destination) {
+      alert('Please enter a valid URL');
+      return;
     }
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault()
+    // Check if user is authenticated
+    if (!window.firebaseUser) {
+      alert('Please log in to generate QR codes');
+      return;
+    }
 
-        const rawDestination = destinationInput.value
-        const destination = normaliseDestination(rawDestination)
+    // Show loading state
+    submitButton.textContent = 'Generating...';
+    submitButton.disabled = true;
 
-        if (!destination) {
-            alert('Please enter a valid URL')
-            return
-        }
+    // Get fresh token (automatically refreshes if expired)
+    let idToken;
+    try {
+      idToken = await window.firebaseUser.getIdToken(true);
+      console.log('Got fresh token:', idToken.substring(0, 50) + '...');
+    } catch (error) {
+      console.error('Failed to get ID token:', error);
+      alert('Session expired. Please log in again.');
+      return;
+    }
 
-        // Check if user is authenticated
-        if (!window.firebaseUser) {
-            alert('Please log in to generate QR codes')
-            return
-        }
+    // Call API to create QR code
+    let slug;
+    try {
+      const response = await fetch('/api/qr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ destination })
+      });
 
-        // Show loading state
-        submitButton.textContent = 'Generating...';
-        submitButton.disabled = true;
-
-        // Get fresh token (automatically refreshes if expired)
-        let idToken
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API error:', response.status, errorText);
+        let errorData;
         try {
-            idToken = await window.firebaseUser.getIdToken(true)
-            console.log('Got fresh token:', idToken.substring(0, 50) + '...')
-        } catch (error) {
-            console.error('Failed to get ID token:', error)
-            alert('Session expired. Please log in again.')
-            return
-        }
-
-        // Call API to create QR code
-        let slug
-        try {
-            const response = await fetch('/api/qr', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                },
-                body: JSON.stringify({ destination })
-            })
-
-            if (!response.ok) {
-                const errorText = await response.text()
-                console.error('API error:', response.status, errorText)
-                let errorData
-                try {
-                    errorData = JSON.parse(errorText)
-                } catch {
-                    errorData = { error: errorText }
-                }
-                
-                // Handle specific error cases
-                if (response.status === 401) {
-                    alert('Please log in again.')
-                    return
-                }
-                
-                if (response.status === 429) {
-                    alert('Rate limit exceeded. Please wait a moment before generating more QR codes.')
-                    return
-                }
-                
-                throw new Error(errorData.error || 'Failed to create QR code')
-            }
-
-            const data = await response.json()
-            slug = data.slug
-        } catch (error) {
-            console.error('API error:', error)
-            alert(error.message || 'Failed to create QR code')
-            return
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
         }
         
-        // Redirect to ad page with slug
-        window.location.href = `/ad.html?slug=${encodeURIComponent(slug)}`;
-    })
+        // Handle specific error cases
+        if (response.status === 401) {
+          alert('Please log in again.');
+          return;
+        }
+        
+        if (response.status === 429) {
+          alert('Rate limit exceeded. Please wait a moment before generating more QR codes.');
+          return;
+        }
+        
+        throw new Error(errorData.error || 'Failed to create QR code');
+      }
+
+      const data = await response.json();
+      slug = data.slug;
+    } catch (error) {
+      console.error('API error:', error);
+      alert(error.message || 'Failed to create QR code');
+      return;
+    }
+    
+    // Redirect to ad page with slug
+    window.location.href = `/ad.html?slug=${encodeURIComponent(slug)}`;
+  });
+}
