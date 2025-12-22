@@ -21,15 +21,12 @@
   background: #fff;
   padding: 30px;
   border: 2px dashed #999;
-  border-radius: 3px;
   max-width: 400px;
   width: 90%;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  font-family: 'Courier New', 'Courier', monospace;
 }
 
-/* Receipt header styling */
 .auth-modal-content h2 {
   text-align: center;
   margin: 0 0 20px 0;
@@ -56,9 +53,9 @@
 
 .auth-modal-close:hover {
   color: #000;
+  letter-spacing: normal;
 }
 
-/* Auth buttons styling */
 .auth-buttons {
   display: flex;
   flex-direction: column;
@@ -66,39 +63,9 @@
   margin-bottom: 20px;
 }
 
-.auth-buttons button {
-  padding: 12px 20px;
-  font-size: 14px;
-  font-family: 'Courier New', 'Courier', monospace;
-  cursor: pointer;
-  border: 1px solid #333;
-  background: #fff;
-  transition: all 0.2s;
-}
-
-.auth-buttons button:hover {
-  background: #f0f0f0;
-  transform: translateY(-1px);
-}
-
-.auth-buttons button:active {
-  transform: translateY(0);
-}
-
-/* Email auth section */
 .auth-email-section {
   padding-top: 15px;
   border-top: 1px dashed #999;
-}
-
-.auth-email-section input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  font-family: 'Courier New', 'Courier', monospace;
-  font-size: 14px;
-  border: 1px solid #999;
-  box-sizing: border-box;
 }
 
 .auth-email-buttons {
@@ -108,40 +75,8 @@
 
 .auth-email-buttons button {
   flex: 1;
-  padding: 10px;
-  font-size: 13px;
-  font-family: 'Courier New', 'Courier', monospace;
-  cursor: pointer;
-  border: 1px solid #333;
-  background: #fff;
 }
 
-.auth-email-buttons button:hover {
-  background: #f0f0f0;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes thermalPrint {
-  from {
-    opacity: 0;
-    transform: scaleY(0) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1) translateY(0);
-  }
-}
-
-/* Receipt footer dashes */
 .auth-modal-content::after {
   content: '';
   display: block;
@@ -150,7 +85,6 @@
   padding-top: 10px;
 }
 
-/* Mobile responsiveness */
 @media (max-width: 480px) {
   .auth-modal-content {
     padding: 20px;
@@ -159,10 +93,5 @@
   
   .auth-modal-content h2 {
     font-size: 16px;
-  }
-  
-  .auth-buttons button {
-    padding: 10px 15px;
-    font-size: 13px;
   }
 }
