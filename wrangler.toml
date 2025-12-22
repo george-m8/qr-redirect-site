@@ -1,0 +1,12 @@
+name = "qr-redirect-site"
+compatibility_date = "2025-12-21"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "qr_redirects"
+database_id = "141783ae-ad13-429f-b49a-cd130a78d994"
+
+[[d1_databases]]
+binding = "RATE_DB"
+database_name = "rate_limits"
+database_id = "e6caaa8a-12f3-49c1-afa7-64fef8c40fcc"
