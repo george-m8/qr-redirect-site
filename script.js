@@ -162,6 +162,10 @@ const form = document.getElementById('qr-form')
             return
         }
 
+        // Show loading state
+        submitButton.textContent = 'Generating...';
+        submitButton.disabled = true;
+
         // Get fresh token (automatically refreshes if expired)
         let idToken
         try {
