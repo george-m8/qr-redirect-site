@@ -14,6 +14,14 @@ if (!window.firebaseAuth) {
     GithubAuthProvider
   } = window.firebaseAuth;
 
+  // Get form elements that need to be enabled/disabled
+  const destinationInput = document.getElementById('destination');
+  const submitButton = document.querySelector('#qr-form button[type="submit"]');
+
+  // Disable form until logged in
+  if (destinationInput) destinationInput.disabled = true;
+  if (submitButton) submitButton.disabled = true;
+
   // UI elements
   const loginGoogleBtn = document.getElementById('login-google');
   const loginGithubBtn = document.getElementById('login-github');
@@ -24,12 +32,6 @@ if (!window.firebaseAuth) {
   const userInfo = document.getElementById('user-info');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
-  const destinationInput = document.getElementById('destination');
-  const submitButton = document.querySelector('#qr-form button[type="submit"]');
-
-  // Disable form until logged in
-  if (destinationInput) destinationInput.disabled = true;
-  if (submitButton) submitButton.disabled = true;
 
   console.log('Auth buttons found:', {
     loginGoogleBtn: !!loginGoogleBtn,
@@ -148,6 +150,7 @@ if (!window.firebaseAuth) {
 
 
 const form = document.getElementById('qr-form')
+    const destinationInput = document.getElementById('destination')
     const output = document.getElementById('output')
     const redirectUrlEl = document.getElementById('redirect-url')
     const redirectUrlLink = redirectUrlEl.parentElement
