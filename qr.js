@@ -158,16 +158,17 @@ async function updateDestination() {
     const result = await response.json();
     console.log('Update result:', result);
     
-    if (!result.qrCode || !result.qrCode.destination) {
+    // API returns { success, slug, destination }
+    if (!result.destination) {
       console.error('Invalid response structure:', result);
       throw new Error('Invalid response from server');
     }
     
-    currentQRData.destination = result.qrCode.destination;
+    currentQRData.destination = result.destination;
 
     // Update the displayed destination
-    document.getElementById('destination-url-text').textContent = result.qrCode.destination;
-    document.getElementById('destination-url').href = result.qrCode.destination;
+    document.getElementById('destination-url-text').textContent = result.destination;
+    document.getElementById('destination-url').href = result.destination;
 
     saveStatus.textContent = '✓ Saved successfully!';
     saveStatus.style.color = 'green';
