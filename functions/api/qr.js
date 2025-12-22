@@ -143,6 +143,7 @@ export async function onRequestPost({ request, env }) {
         // slug collision, retry
       }
     }
+  }
 
   if (!inserted) {
     return new Response('Could not generate unique slug', { status: 500 })
