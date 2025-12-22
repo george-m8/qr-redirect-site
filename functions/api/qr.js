@@ -37,7 +37,7 @@ async function checkRateLimit(DB, identifier) {
 }
 
 export async function onRequestPost({ request, env }) {
-  const { DB } = env
+  const { DB, RATE_DB } = env
 
   // Get client identifier (IP address)
   const clientIP = request.headers.get('CF-Connecting-IP') || 
@@ -45,7 +45,7 @@ export async function onRequestPost({ request, env }) {
                    'unknown'
 
   // Check rate limit
-  const rateLimitCheck = await checkRateLimit(DB, clientIP)
+  const rateLimitCheck = await checkRateLimit(RATE_DB, clientIP)
   if (!rateLimitCheck.allowed) {
     return new Response(
       JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
