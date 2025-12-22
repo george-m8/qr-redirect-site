@@ -65,8 +65,22 @@ if (!window.firebaseAuth) {
         passwordInput.value
       );
     } catch (error) {
-      console.error('Email signup error:', error);
-      alert('Failed to sign up with email');
+      if (error.code === 'auth/email-already-in-use') {
+        // Auto-login if email already exists
+        try {
+          await signInWithEmailAndPassword(
+            auth,
+            emailInput.value,
+            passwordInput.value
+          );
+        } catch (loginError) {
+          console.error('Auto-login failed:', loginError);
+          alert('Email already in use. Please use correct password.');
+        }
+      } else {
+        console.error('Email signup error:', error);
+        alert(error.message || 'Failed to sign up with email');
+      }
     }
   });
 
