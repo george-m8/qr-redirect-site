@@ -19,17 +19,40 @@
 
 .auth-modal-content {
   background: #fff;
-  padding: 30px;
-  border: 2px dashed #999;
+  padding: 0;
+  border-left: 1px dashed #999;
+  border-right: 1px dashed #999;
+  border-top: 3px solid #333;
+  border-bottom: 3px solid #333;
   max-width: 400px;
   width: 90%;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.auth-modal-content::before {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  padding: 20px 30px 0 30px;
+  overflow: hidden;
+}
+
+.auth-modal-content::after {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  padding: 0 30px 20px 30px;
+  overflow: hidden;
+}
+
 .auth-modal-content h2 {
   text-align: center;
-  margin: 0 0 20px 0;
+  margin: 20px 30px;
   padding-bottom: 10px;
   border-bottom: 1px dashed #999;
   font-size: 18px;
@@ -40,7 +63,7 @@
 .auth-modal-close {
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 30px;
   font-size: 24px;
   font-weight: bold;
   color: #666;
@@ -49,6 +72,7 @@
   border: none;
   padding: 5px 10px;
   line-height: 1;
+  z-index: 10;
 }
 
 .auth-modal-close:hover {
@@ -60,11 +84,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
+  margin: 0 30px 20px 30px;
 }
 
 .auth-email-section {
-  padding-top: 15px;
+  padding: 15px 30px 20px 30px;
   border-top: 1px dashed #999;
 }
 
@@ -77,21 +101,29 @@
   flex: 1;
 }
 
-.auth-modal-content::after {
-  content: '';
-  display: block;
-  margin-top: 20px;
-  border-top: 1px dashed #999;
-  padding-top: 10px;
-}
-
 @media (max-width: 480px) {
   .auth-modal-content {
-    padding: 20px;
     width: 95%;
   }
   
   .auth-modal-content h2 {
     font-size: 16px;
+  }
+  
+  .auth-modal-content::before,
+  .auth-modal-content::after {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .auth-buttons,
+  .auth-email-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .auth-modal-content h2 {
+    margin-left: 20px;
+    margin-right: 20px;
   }
 }
