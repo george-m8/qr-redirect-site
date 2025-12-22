@@ -1,4 +1,4 @@
-import { getBaseUrl, copyToClipboard as copyTextToClipboard } from './utils.js';
+import { getBaseUrl, copyToClipboard as copyTextToClipboard, generateQRFilename } from './utils.js';
 
 if (!window.firebaseAuth) {
   console.error('Firebase Auth not loaded');
@@ -62,26 +62,45 @@ async function loadDashboard() {
     } else {
       dashboardContent.innerHTML = qrCodes.map(qr => `
         <div class="qr-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-          <div style="margin-bottom: 10px;">
-            <strong>Slug:</strong> <code>${qr.slug}</code>
-            <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" style="margin-left: 10px;">Copy URL</button>
-          </div>
-          <div style="margin-bottom: 10px;">
-            <strong>Destination:</strong>
-            <input 
-              type="text" 
-              id="dest-${qr.slug}" 
-              value="${qr.destination}" 
-              style="width: 70%; padding: 5px;"
-            />
-            <button onclick="updateDestination('${qr.slug}')" style="margin-left: 10px;">Save</button>
-            <span id="status-${qr.slug}" style="margin-left: 10px; color: green;"></span>
-          </div>
-          <div style="font-size: 0.9em; color: #666;">
-            Created: ${new Date(qr.created_at).toLocaleString()}
+          <div style="display: flex; gap: 20px;">
+            <div style="flex-shrink: 0;">
+              <canvas id="canvas-${qr.slug}" width="150" height="150" style="border: 1px solid #ddd;"></canvas>
+              <br>
+              <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download</button>
+            </div>
+            <div style="flex-grow: 1;">
+              <div style="margin-bottom: 10px;">
+                <strong>Slug:</strong> <code>${qr.slug}</code>
+                <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" style="margin-left: 10px;">Copy URL</button>
+              </div>
+              <div style="margin-bottom: 10px;">
+                <strong>Destination:</strong>
+                <input 
+                  type="text" 
+                  id="dest-${qr.slug}" 
+                  value="${qr.destination}" 
+                  style="width: 70%; padding: 5px;"
+                />
+                <button onclick="updateDestination('${qr.slug}')" style="margin-left: 10px;">Save</button>
+                <span id="status-${qr.slug}" style="margin-left: 10px; color: green;"></span>
+              </div>
+              <div style="font-size: 0.9em; color: #666;">
+                Created: ${new Date(qr.created_at).toLocaleString()}
+              </div>
+            </div>
           </div>
         </div>
       `).join('');
+      
+      // Generate QR codes after DOM is updated
+      qrCodes.forEach(qr => {
+        const canvas = document.getElementById(`canvas-${qr.slug}`);
+        const shortUrl = `${getBaseUrl()}/r/${qr.slug}`;
+        QRCode.toCanvas(canvas, shortUrl, {
+          width: 150,
+          margin: 1
+        });
+      });
     }
   } catch (error) {
     console.error('Failed to load dashboard:', error);
@@ -148,6 +167,20 @@ function copyToClipboard(text) {
   });
 }
 
+function downloadQR(slug, destination) {
+  const canvas = document.getElementById(`canvas-${slug}`);
+  if (!canvas) {
+    alert('QR code not found');
+    return;
+  }
+  
+  const filename = generateQRFilename(slug, destination);
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
 function getBaseUrlWrapper() {
   return getBaseUrl();
 }
@@ -155,4 +188,5 @@ function getBaseUrlWrapper() {
 // Make functions globally available
 window.updateDestination = updateDestination;
 window.copyToClipboard = copyToClipboard;
+window.downloadQR = downloadQR;
 window.getBaseUrlWrapper = getBaseUrlWrapper;
