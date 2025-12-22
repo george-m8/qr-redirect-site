@@ -6,6 +6,11 @@ const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW = 60 // seconds
 
 async function checkRateLimit(DB, identifier) {
+  if (!DB) {
+    console.error('RATE_DB binding not found')
+    return { allowed: true, remaining: RATE_LIMIT_MAX } // Fail open
+  }
+
   try {
     // Clean up old entries
     await DB
