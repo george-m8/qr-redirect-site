@@ -44,6 +44,56 @@ async function checkRateLimit(db, identifier, max, windowSeconds) {
   }
 }
 
+// GET /api/qr - List all QR codes owned by authenticated user
+export async function onRequestGet({ request, env }) {
+  const { DB, FIREBASE_PROJECT_ID } = env
+
+  // Extract and verify Firebase token
+  const authHeader = request.headers.get('Authorization');
+  const token = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  const payload = await verifyFirebaseToken(token, FIREBASE_PROJECT_ID);
+
+  if (!payload) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { 
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
+  const userId = payload.sub;
+
+  try {
+    // Query all QR codes owned by this user
+    const result = await DB
+      .prepare('SELECT slug, destination, created_at FROM qr_codes WHERE owner = ? ORDER BY created_at DESC')
+      .bind(userId)
+      .all();
+
+    return new Response(
+      JSON.stringify({ qrCodes: result.results || [] }),
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  } catch (error) {
+    console.error('Failed to fetch QR codes:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch QR codes' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
+}
+
+// POST /api/qr - Create new QR code
 export async function onRequestPost({ request, env }) {
   const { DB, RATE_DB, FIREBASE_PROJECT_ID } = env
 
