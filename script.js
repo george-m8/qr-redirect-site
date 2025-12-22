@@ -300,8 +300,9 @@ const form = document.getElementById('qr-form')
     })
 
     downloadBtn.addEventListener('click', () => {
+      const hostnameStr = sanitizeForFilename(baseUrl)
       const destinationStr = sanitizeForFilename(currentDestination)
-      const filename = `${currentSlug}_${destinationStr}.png`
+      const filename = `${hostnameStr}_${currentSlug}_${destinationStr}.png`
       
       const link = document.createElement('a')
       link.download = filename
