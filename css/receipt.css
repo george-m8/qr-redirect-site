@@ -176,8 +176,6 @@ button:disabled:hover {
 a {
   color: #333;
   text-decoration: none;
-  border-bottom: 1px dashed #333;
-  transition: all 0.2s ease;
   display: inline-block;
   -webkit-tap-highlight-color: transparent;
 }
@@ -189,7 +187,6 @@ a:visited {
 
 a:hover,
 a:active {
-  border-bottom: 2px dashed #000;
   color: #000;
   font-weight: bold;
 }

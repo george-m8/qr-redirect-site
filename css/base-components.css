@@ -23,6 +23,11 @@ body {
     gap: 0.8rem;
 }
 
+.responsive-inline {
+    display:inline-block;
+}
+
+
 .small-text {
     font-size: 10px;
     color: #666;
@@ -31,4 +36,13 @@ body {
 
 .light-text {
     color: #999;
+}
+
+@media (max-width: 480px) {
+    .responsive-inline {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        gap:0.4rem;
+    }
 }
