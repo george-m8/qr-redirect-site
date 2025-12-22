@@ -105,12 +105,8 @@ if (!window.firebaseAuth) {
 
       if (userInfo) userInfo.textContent = user.email || user.uid;
 
-      // Save token for backend authentication
-      try {
-        window.firebaseIdToken = await user.getIdToken();
-      } catch (error) {
-        console.error('Failed to get ID token:', error);
-      }
+      // Store user object to get fresh tokens on demand
+      window.firebaseUser = user;
     } else {
       if (loginGoogleBtn) loginGoogleBtn.style.display = 'inline-block';
       if (loginGithubBtn) loginGithubBtn.style.display = 'inline-block';
@@ -119,7 +115,7 @@ if (!window.firebaseAuth) {
       if (logoutBtn) logoutBtn.style.display = 'none';
 
       if (userInfo) userInfo.textContent = '';
-      window.firebaseIdToken = null;
+      window.firebaseUser = null;
     }
   });
 }
@@ -244,8 +240,18 @@ const form = document.getElementById('qr-form')
         }
 
         // Check if user is authenticated
-        if (!window.firebaseIdToken) {
+        if (!window.firebaseUser) {
             alert('Please log in to generate QR codes')
+            return
+        }
+
+        // Get fresh token (automatically refreshes if expired)
+        let idToken
+        try {
+            idToken = await window.firebaseUser.getIdToken(true)
+        } catch (error) {
+            console.error('Failed to get ID token:', error)
+            alert('Session expired. Please log in again.')
             return
         }
 
@@ -268,7 +274,7 @@ const form = document.getElementById('qr-form')
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${window.firebaseIdToken}`
+                        'Authorization': `Bearer ${idToken}`
                     },
                     body: JSON.stringify({ 
                         destination,
