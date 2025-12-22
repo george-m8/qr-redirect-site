@@ -133,7 +133,7 @@ const form = document.getElementById('qr-form')
     const destinationUrlLink = destinationUrlEl.parentElement
     const baseUrl = getBaseUrl()
     let currentDestination = ''
-    const STORAGE_KEY = 'qr-redirect-mappings'
+    let currentSlug = ''
     const RATE_LIMIT_KEY = 'qr-redirect-rate-limit'
     const MAX_REQUESTS = 10
     const TIME_WINDOW = 60000 // 1 minute in milliseconds
@@ -161,25 +161,6 @@ const form = document.getElementById('qr-form')
         } catch (e) {
             console.error('Rate limit check failed:', e)
             return { allowed: true } // Fail open
-        }
-    }
-
-    function getStoredMappings() {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY)
-            return stored ? JSON.parse(stored) : {}
-        } catch {
-            return {}
-        }
-    }
-
-    function storeMapping(destination, slug) {
-        try {
-            const mappings = getStoredMappings()
-            mappings[destination] = slug
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(mappings))
-        } catch (e) {
-            console.error('Failed to store mapping:', e)
         }
     }
 
@@ -256,67 +237,60 @@ const form = document.getElementById('qr-form')
             return
         }
 
-        // Check if we already have a slug for this destination
-        const mappings = getStoredMappings()
-        let slug = mappings[destination]
-        
-        // If no existing slug, call API to create one
-        if (!slug) {
-            // Check rate limit for new QR code generation
-            const rateLimitCheck = checkRateLimit()
-            if (!rateLimitCheck.allowed) {
-                alert(`Rate limit exceeded. Please wait ${rateLimitCheck.waitTime} seconds before generating more QR codes.`)
-                return
-            }
+        // Check rate limit for new QR code generation
+        const rateLimitCheck = checkRateLimit()
+        if (!rateLimitCheck.allowed) {
+            alert(`Rate limit exceeded. Please wait ${rateLimitCheck.waitTime} seconds before generating more QR codes.`)
+            return
+        }
 
-            // Call API to create QR code
-            try {
-                const response = await fetch('/api/qr', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    },
-                    body: JSON.stringify({ 
-                        destination,
-                        slug: slugInput.value.trim() || undefined
-                    })
+        // Always call API to create QR code (ensures uniqueness per user)
+        let slug
+        try {
+            const response = await fetch('/api/qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ 
+                    destination,
+                    slug: slugInput.value.trim() || undefined
                 })
+            })
 
-                if (!response.ok) {
-                    const errorText = await response.text()
-                    console.error('API error:', response.status, errorText)
-                    let errorData
-                    try {
-                        errorData = JSON.parse(errorText)
-                    } catch {
-                        errorData = { error: errorText }
-                    }
-                    throw new Error(errorData.error || 'Failed to create QR code')
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error('API error:', response.status, errorText)
+                let errorData
+                try {
+                    errorData = JSON.parse(errorText)
+                } catch {
+                    errorData = { error: errorText }
                 }
-
-                const data = await response.json()
-                slug = data.slug
-                storeMapping(destination, slug)
-            } catch (error) {
-                console.error('API error:', error)
-                alert(error.message || 'Failed to create QR code')
-                return
+                throw new Error(errorData.error || 'Failed to create QR code')
             }
+
+            const data = await response.json()
+            slug = data.slug
+        } catch (error) {
+            console.error('API error:', error)
+            alert(error.message || 'Failed to create QR code')
+            return
         }
         
         const redirectUrl = `${baseUrl}/r/${slug}`
 
         currentDestination = destination
+        currentSlug = slug
         redirectUrlEl.textContent = redirectUrl
         redirectUrlLink.href = redirectUrl
         destinationUrlEl.textContent = destination
         destinationUrlLink.href = destination
         output.style.display = 'block'
 
-        const hostnameStr = sanitizeForFilename(baseUrl)
         const destinationStr = sanitizeForFilename(currentDestination)
-        const title = `${hostnameStr}_${destinationStr}`
+        const title = `${slug}_${destinationStr}`
         canvas.title = title
 
         await QRCode.toCanvas(canvas, redirectUrl, {
@@ -326,9 +300,8 @@ const form = document.getElementById('qr-form')
     })
 
     downloadBtn.addEventListener('click', () => {
-      const hostnameStr = sanitizeForFilename(baseUrl)
       const destinationStr = sanitizeForFilename(currentDestination)
-      const filename = `${hostnameStr}_${destinationStr}.png`
+      const filename = `${currentSlug}_${destinationStr}.png`
       
       const link = document.createElement('a')
       link.download = filename
