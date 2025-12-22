@@ -192,6 +192,11 @@ function copyToClipboard(type) {
 }
 
 function downloadQR() {
+  if (!currentQRData) {
+    alert('QR code data not loaded yet');
+    return;
+  }
+  
   const canvas = document.getElementById('qr-canvas');
   const filename = generateQRFilename(currentQRData.slug, currentQRData.destination);
   
