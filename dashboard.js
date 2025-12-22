@@ -24,7 +24,7 @@ if (!window.firebaseAuth) {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       if (logoutBtn) logoutBtn.style.display = 'inline-block';
-      if (userInfo) userInfo.textContent = user.email || user.uid;
+      if (userInfo) userInfo.textContent = 'logged in as: ' + (user.email || user.uid);
 
       window.firebaseUser = user;
       loadDashboard();
@@ -70,7 +70,7 @@ async function loadDashboard() {
             </div>
             <div style="flex-grow: 1;">
               <div style="margin-bottom: 10px;">
-                <strong class="input-title">URL:</strong> <code>${getBaseUrlWrapper()}/r/${qr.slug}</code>
+                <strong class="input-title">URL:</strong> <a href="${getBaseUrlWrapper()}/r/${qr.slug}" target="_blank" rel="noopener noreferrer"><code>${getBaseUrlWrapper()}/r/${qr.slug}</code></a>
                 <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn" style="margin-left: 10px;">Copy URL</button>
               </div>
               <div style="margin-bottom: 10px;">
