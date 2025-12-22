@@ -1,3 +1,82 @@
+const {
+  auth,
+  onAuthStateChanged,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  GithubAuthProvider
+} = window.firebaseAuth;
+
+// UI elements
+const loginGoogleBtn = document.getElementById('login-google');
+const loginGithubBtn = document.getElementById('login-github');
+const loginEmailBtn = document.getElementById('login-email');
+const signupEmailBtn = document.getElementById('signup-email');
+const logoutBtn = document.getElementById('logout');
+const userInfo = document.getElementById('user-info');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+
+// Google
+loginGoogleBtn.addEventListener('click', async () => {
+  await signInWithPopup(auth, new GoogleAuthProvider());
+});
+
+// GitHub
+loginGithubBtn.addEventListener('click', async () => {
+  await signInWithPopup(auth, new GithubAuthProvider());
+});
+
+// Email login
+loginEmailBtn.addEventListener('click', async () => {
+  await signInWithEmailAndPassword(
+    auth,
+    emailInput.value,
+    passwordInput.value
+  );
+});
+
+// Email signup
+signupEmailBtn.addEventListener('click', async () => {
+  await createUserWithEmailAndPassword(
+    auth,
+    emailInput.value,
+    passwordInput.value
+  );
+});
+
+// Logout
+logoutBtn.addEventListener('click', async () => {
+  await signOut(auth);
+});
+
+// Auth state listener (this is the important bit)
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    loginGoogleBtn.style.display = 'none';
+    loginGithubBtn.style.display = 'none';
+    loginEmailBtn.style.display = 'none';
+    signupEmailBtn.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+
+    userInfo.textContent = user.email || user.uid;
+
+    // 🔑 Save token for later backend use
+    window.firebaseIdToken = await user.getIdToken();
+  } else {
+    loginGoogleBtn.style.display = 'inline-block';
+    loginGithubBtn.style.display = 'inline-block';
+    loginEmailBtn.style.display = 'inline-block';
+    signupEmailBtn.style.display = 'inline-block';
+    logoutBtn.style.display = 'none';
+
+    userInfo.textContent = '';
+    window.firebaseIdToken = null;
+  }
+});
+
 const form = document.getElementById('qr-form')
     const destinationInput = document.getElementById('destination')
     const slugInput = document.getElementById('slug')
