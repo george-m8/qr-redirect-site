@@ -23,6 +23,20 @@
     </label>
 
     <br /><br />
+    <div id="auth">
+    <button id="login-google">Log in with Google</button>
+    <button id="login-github">Log in with GitHub</button>
+
+    <div>
+      <input id="email" type="email" placeholder="email" />
+      <input id="password" type="password" placeholder="password" />
+      <button id="login-email">Email login</button>
+      <button id="signup-email">Email sign up</button>
+    </div>
+
+    <button id="logout" style="display:none;">Log out</button>
+    <span id="user-info"></span>
+  </div>
 
     <label>
       Slug (optional)<br />
@@ -59,6 +73,46 @@
 
     <button id="download">Download PNG</button>
   </div>
+  <!-- Firebase Auth (CDN, no build step) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithPopup,
+      GoogleAuthProvider,
+      GithubAuthProvider,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-f9TGmva8BXdX6_b460tdrUkzTGkbjjw",
+      authDomain: "qr-redirect-site-1f3b9.firebaseapp.com",
+      projectId: "qr-redirect-site-1f3b9",
+      storageBucket: "qr-redirect-site-1f3b9.firebasestorage.app",
+      messagingSenderId: "897097551184",
+      appId: "1:897097551184:web:aca2f4c3aeac4f21b4b055"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Expose a tiny surface area to script.js
+    window.firebaseAuth = {
+      auth,
+      onAuthStateChanged,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      GoogleAuthProvider,
+      GithubAuthProvider
+    };
+  </script>
+
+  <script src="script.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
