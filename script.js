@@ -243,11 +243,17 @@ const form = document.getElementById('qr-form')
             return
         }
 
+        // Check if user is authenticated
+        if (!window.firebaseIdToken) {
+            alert('Please log in to generate QR codes')
+            return
+        }
+
         // Check if we already have a slug for this destination
         const mappings = getStoredMappings()
         let slug = mappings[destination]
         
-        // If no existing slug and user didn't provide one, generate new
+        // If no existing slug, call API to create one
         if (!slug) {
             // Check rate limit for new QR code generation
             const rateLimitCheck = checkRateLimit()
@@ -255,9 +261,34 @@ const form = document.getElementById('qr-form')
                 alert(`Rate limit exceeded. Please wait ${rateLimitCheck.waitTime} seconds before generating more QR codes.`)
                 return
             }
-            
-            slug = slugInput.value.trim() || generateSlug()
-            storeMapping(destination, slug)
+
+            // Call API to create QR code
+            try {
+                const response = await fetch('/api/qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${window.firebaseIdToken}`
+                    },
+                    body: JSON.stringify({ 
+                        destination,
+                        slug: slugInput.value.trim() || undefined
+                    })
+                })
+
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.error || 'Failed to create QR code')
+                }
+
+                const data = await response.json()
+                slug = data.slug
+                storeMapping(destination, slug)
+            } catch (error) {
+                console.error('API error:', error)
+                alert(error.message || 'Failed to create QR code')
+                return
+            }
         }
         
         const redirectUrl = `${baseUrl}/r/${slug}`

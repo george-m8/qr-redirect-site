@@ -1,3 +1,5 @@
+import { verifyFirebaseToken } from '../_auth';
+
 function generateSlug() {
   return Math.random().toString(36).slice(2, 8)
 }
@@ -43,18 +45,33 @@ async function checkRateLimit(db, identifier, max, windowSeconds) {
 }
 
 export async function onRequestPost({ request, env }) {
-  const { DB, RATE_DB } = env
+  const { DB, RATE_DB, FIREBASE_PROJECT_ID } = env
+
+  // Extract and verify Firebase token
+  const authHeader = request.headers.get('Authorization');
+  const token = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  const payload = await verifyFirebaseToken(token, FIREBASE_PROJECT_ID);
+
+  if (!payload) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { 
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
+  const userId = payload.user_id; // Firebase uid
 
   const RATE_LIMIT_MAX = 6 // requests
   const RATE_LIMIT_WINDOW = 60 // seconds
 
-  // Get client identifier (IP address)
-  const clientIP = request.headers.get('CF-Connecting-IP') || 
-                   request.headers.get('X-Forwarded-For')?.split(',')[0] || 
-                   'unknown'
-
-  // Check rate limit
-  const rateLimitCheck = await checkRateLimit(RATE_DB, clientIP, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)
+  // Check rate limit using userId instead of IP
+  const rateLimitCheck = await checkRateLimit(RATE_DB, userId, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)
   if (!rateLimitCheck.allowed) {
     return new Response(
       JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
@@ -75,32 +92,57 @@ export async function onRequestPost({ request, env }) {
     return new Response('Invalid JSON', { status: 400 })
   }
 
-  const { destination } = body
+  const { destination, slug: customSlug } = body
 
   if (!destination || typeof destination !== 'string') {
     return new Response('Missing destination', { status: 400 })
   }
 
-  let slug
+  let slug = customSlug || null
   let inserted = false
 
-  for (let i = 0; i < 5; i++) {
-    slug = generateSlug()
-
+  // If custom slug provided, try it first
+  if (slug) {
     try {
       await DB
         .prepare(
-          'INSERT INTO qr_codes (slug, destination, created_at) VALUES (?, ?, datetime("now"))'
+          'INSERT INTO qr_codes (slug, destination, owner, created_at) VALUES (?, ?, ?, datetime("now"))'
         )
-        .bind(slug, destination)
+        .bind(slug, destination, userId)
         .run()
-
+      
       inserted = true
-      break
     } catch {
-      // slug collision, retry
+      // Custom slug already exists or invalid
+      return new Response(
+        JSON.stringify({ error: 'Slug already in use' }),
+        { 
+          status: 409,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
   }
+
+  // Generate random slug if no custom slug or not yet inserted
+  if (!inserted) {
+    for (let i = 0; i < 5; i++) {
+      slug = generateSlug()
+
+      try {
+        await DB
+          .prepare(
+            'INSERT INTO qr_codes (slug, destination, owner, created_at) VALUES (?, ?, ?, datetime("now"))'
+          )
+          .bind(slug, destination, userId)
+          .run()
+
+        inserted = true
+        break
+      } catch {
+        // slug collision, retry
+      }
+    }
 
   if (!inserted) {
     return new Response('Could not generate unique slug', { status: 500 })

@@ -10,3 +10,6 @@ database_id = "141783ae-ad13-429f-b49a-cd130a78d994"
 binding = "RATE_DB"
 database_name = "rate_limits"
 database_id = "e6caaa8a-12f3-49c1-afa7-64fef8c40fcc"
+
+[vars]
+FIREBASE_PROJECT_ID = "qr-redirect-site-1f3b9"
