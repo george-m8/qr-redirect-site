@@ -1,81 +1,115 @@
-const {
-  auth,
-  onAuthStateChanged,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  GoogleAuthProvider,
-  GithubAuthProvider
-} = window.firebaseAuth;
-
-// UI elements
-const loginGoogleBtn = document.getElementById('login-google');
-const loginGithubBtn = document.getElementById('login-github');
-const loginEmailBtn = document.getElementById('login-email');
-const signupEmailBtn = document.getElementById('signup-email');
-const logoutBtn = document.getElementById('logout');
-const userInfo = document.getElementById('user-info');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-
-// Google
-loginGoogleBtn.addEventListener('click', async () => {
-  await signInWithPopup(auth, new GoogleAuthProvider());
-});
-
-// GitHub
-loginGithubBtn.addEventListener('click', async () => {
-  await signInWithPopup(auth, new GithubAuthProvider());
-});
-
-// Email login
-loginEmailBtn.addEventListener('click', async () => {
-  await signInWithEmailAndPassword(
+if (!window.firebaseAuth) {
+  console.error('Firebase Auth not loaded');
+} else {
+  const {
     auth,
-    emailInput.value,
-    passwordInput.value
-  );
-});
+    onAuthStateChanged,
+    signInWithPopup,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    GoogleAuthProvider,
+    GithubAuthProvider
+  } = window.firebaseAuth;
 
-// Email signup
-signupEmailBtn.addEventListener('click', async () => {
-  await createUserWithEmailAndPassword(
-    auth,
-    emailInput.value,
-    passwordInput.value
-  );
-});
+  // UI elements
+  const loginGoogleBtn = document.getElementById('login-google');
+  const loginGithubBtn = document.getElementById('login-github');
+  const loginEmailBtn = document.getElementById('login-email');
+  const signupEmailBtn = document.getElementById('signup-email');
+  const logoutBtn = document.getElementById('logout');
+  const userInfo = document.getElementById('user-info');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
 
-// Logout
-logoutBtn.addEventListener('click', async () => {
-  await signOut(auth);
-});
+  // Google
+  loginGoogleBtn?.addEventListener('click', async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      alert('Failed to sign in with Google');
+    }
+  });
 
-// Auth state listener (this is the important bit)
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    loginGoogleBtn.style.display = 'none';
-    loginGithubBtn.style.display = 'none';
-    loginEmailBtn.style.display = 'none';
-    signupEmailBtn.style.display = 'none';
-    logoutBtn.style.display = 'inline-block';
+  // GitHub
+  loginGithubBtn?.addEventListener('click', async () => {
+    try {
+      await signInWithPopup(auth, new GithubAuthProvider());
+    } catch (error) {
+      console.error('GitHub sign-in error:', error);
+      alert('Failed to sign in with GitHub');
+    }
+  });
 
-    userInfo.textContent = user.email || user.uid;
+  // Email login
+  loginEmailBtn?.addEventListener('click', async () => {
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+    } catch (error) {
+      console.error('Email sign-in error:', error);
+      alert('Failed to sign in with email');
+    }
+  });
 
-    // 🔑 Save token for later backend use
-    window.firebaseIdToken = await user.getIdToken();
-  } else {
-    loginGoogleBtn.style.display = 'inline-block';
-    loginGithubBtn.style.display = 'inline-block';
-    loginEmailBtn.style.display = 'inline-block';
-    signupEmailBtn.style.display = 'inline-block';
-    logoutBtn.style.display = 'none';
+  // Email signup
+  signupEmailBtn?.addEventListener('click', async () => {
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+    } catch (error) {
+      console.error('Email signup error:', error);
+      alert('Failed to sign up with email');
+    }
+  });
 
-    userInfo.textContent = '';
-    window.firebaseIdToken = null;
-  }
-});
+  // Logout
+  logoutBtn?.addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Sign-out error:', error);
+      alert('Failed to sign out');
+    }
+  });
+
+  // Auth state listener
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      if (loginGoogleBtn) loginGoogleBtn.style.display = 'none';
+      if (loginGithubBtn) loginGithubBtn.style.display = 'none';
+      if (loginEmailBtn) loginEmailBtn.style.display = 'none';
+      if (signupEmailBtn) signupEmailBtn.style.display = 'none';
+      if (logoutBtn) logoutBtn.style.display = 'inline-block';
+
+      if (userInfo) userInfo.textContent = user.email || user.uid;
+
+      // Save token for backend authentication
+      try {
+        window.firebaseIdToken = await user.getIdToken();
+      } catch (error) {
+        console.error('Failed to get ID token:', error);
+      }
+    } else {
+      if (loginGoogleBtn) loginGoogleBtn.style.display = 'inline-block';
+      if (loginGithubBtn) loginGithubBtn.style.display = 'inline-block';
+      if (loginEmailBtn) loginEmailBtn.style.display = 'inline-block';
+      if (signupEmailBtn) signupEmailBtn.style.display = 'inline-block';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+
+      if (userInfo) userInfo.textContent = '';
+      window.firebaseIdToken = null;
+    }
+  });
+}
+
 
 const form = document.getElementById('qr-form')
     const destinationInput = document.getElementById('destination')
