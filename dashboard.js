@@ -61,7 +61,7 @@ async function loadDashboard() {
       dashboardContent.innerHTML = '<p>No QR codes yet. <a href="/">Create one!</a></p>';
     } else {
       dashboardContent.innerHTML = qrCodes.map(qr => `
-        <div class="qr-item" style="border: 1px dashed #999; padding: 15px; margin-bottom: 15px;">
+        <div class="qr-item">
           <div class="qr-item-container">
             <div class="qr-display-section">
               <div id="display-${qr.slug}"></div>
