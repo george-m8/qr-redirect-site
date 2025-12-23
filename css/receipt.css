@@ -335,6 +335,11 @@ hr {
   opacity: 0.9;
 }
 
+.secondary-btn.failed {
+  color: #e0001e;
+  font-weight: bold;
+}
+
 .qr-info-section {
   flex-grow: 1;
   min-width: 0;

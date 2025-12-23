@@ -198,7 +198,7 @@ function copyToClipboard(text, btn) {
       if (button && button.tagName === 'BUTTON') {
         // store original text if not stored
         if (!button.dataset.origText) button.dataset.origText = button.textContent;
-        button.textContent = 'Copied';
+        button.textContent = 'copied!';
         button.classList.add('copied');
         setTimeout(() => {
           // restore
@@ -210,11 +210,11 @@ function copyToClipboard(text, btn) {
       // failure fallback: briefly show a failure state
       if (button && button.tagName === 'BUTTON') {
         const prev = button.textContent;
-        button.textContent = 'Failed';
-        button.classList.add('copied');
+        button.textContent = 'failed';
+        button.classList.add('copied', 'failed');
         setTimeout(() => {
           button.textContent = prev;
-          button.classList.remove('copied');
+          button.classList.remove('copied', 'failed');
         }, 1500);
       }
     }
