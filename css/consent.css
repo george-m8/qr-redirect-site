@@ -28,6 +28,7 @@
   font-family: 'Courier New', Courier, monospace;
   max-height: 90vh;
   overflow-y: auto;
+  padding:1.8rem;
 }
 
 .consent-header {
@@ -35,14 +36,6 @@
   border-bottom: 1px dashed #999;
   padding: 30px 30px 20px 30px;
   border-top: 3px solid #333;
-}
-
-/* Use same padding as receipt-header for responsive behavior */
-.consent-modal .consent-header,
-.consent-modal .consent-body,
-.consent-modal .consent-actions {
-  padding-left: 30px;
-  padding-right: 30px;
 }
 
 .consent-header::before {
@@ -71,6 +64,7 @@
 
 .consent-body {
   padding: 30px;
+  text-align:center;
 }
 
 .consent-section {
@@ -109,6 +103,9 @@
 .consent-option input[type="checkbox"] {
   margin-right: 10px;
   cursor: pointer;
+  filter: greyscale;
+  :webkit-filter: greyscale;
+  -moz-filter: greyscale;
 }
 
 .consent-option input[type="checkbox"]:disabled {
@@ -145,14 +142,25 @@
 }
 
 .consent-links {
+  margin-top: 1rem;
   font-size: 11px;
   color: #666;
 }
 
 .consent-links a {
-  /* Will inherit from p a in base-components.css */
   margin: 0 10px;
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  letter-spacing: 0px;
+  transition: letter-spacing 0.2s ease;
 }
+
+.consent-links a:hover {
+  letter-spacing: 2px;
+}
+
+
 
 #consent-custom {
   display: none;
@@ -177,34 +185,15 @@
 }
 
 /* Responsive padding - match receipt.css behavior */
-@media (max-width: 650px) {
-  .consent-modal .consent-header,
-  .consent-modal .consent-body,
-  .consent-modal .consent-actions,
-  .consent-modal .consent-footer {
-    padding-left: 20px;
-    padding-right: 20px;
+@media (max-width: 460px) {
+  .consent-content{
+    padding:1rem;
   }
 }
 
-@media (max-width: 420px) {
-  .consent-modal .consent-header,
-  .consent-modal .consent-body,
-  .consent-modal .consent-actions,
-  .consent-modal .consent-footer {
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
-  
-  .consent-modal .consent-header {
-    padding-top: 20px;
-    padding-bottom: 15px;
-  }
-  
-  .consent-modal .consent-footer {
-    padding-top: 15px;
-    padding-bottom: 20px;
+@media (max-width: 340px) {
+  .consent-content{
+    padding-left:0;
+    padding-right:0;
   }
 }
