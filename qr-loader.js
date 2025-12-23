@@ -104,4 +104,19 @@
   }
 
   init();
+  // Observe for any future `.spinner-animation` insertions and run loader for them
+  const observer = new MutationObserver((mutations)=>{
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (!(node instanceof HTMLElement)) continue;
+        if (node.matches && node.matches('.spinner-animation')) {
+          run();
+          return;
+        }
+        const found = node.querySelector && node.querySelector('.spinner-animation');
+        if (found) { run(); return; }
+      }
+    }
+  });
+  observer.observe(document.documentElement || document.body, {childList: true, subtree: true});
 })();
