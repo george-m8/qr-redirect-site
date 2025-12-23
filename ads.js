@@ -174,16 +174,17 @@
         console.log('[ads.js] AdSense marked done for slot:', options.slot);
       }
       
-      // After being done for 500ms, check one final time then stop
-      if (doneTime && (Date.now() - doneTime >= 500)) {
+      // After being done for 2000ms (2 seconds), stop checking and assume filled
+      // Google should have set unfilled status by then if it was going to
+      if (doneTime && (Date.now() - doneTime >= 2000)) {
         clearInterval(checkInterval);
         
-        // Final check
+        // One final check
         const finalAdStatus = insElement.getAttribute('data-ad-status');
         const finalNoAblate = insElement.classList.contains('adsbygoogle-noablate');
         const finalDisplay = window.getComputedStyle(insElement).display;
         
-        // Check if iframe actually has content (not a 400 or empty response)
+        // Check if iframe actually has content
         const iframe = insElement.querySelector('iframe');
         const iframeHasError = iframe && (
           iframe.offsetHeight === 0 || 
