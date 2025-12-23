@@ -319,30 +319,36 @@
     }
 
     // now ensure real lib; when available replace smoothly preserving progress
-    // For ad pages we intentionally skip swapping in the real matrix so the fallback
-    // animation pacing (document._qrDesiredDuration) remains authoritative and slower.
-    if (isAdPage) return;
-
     ensureLib((err)=>{
       if (err) return; // keep fallback
-      const realRows = buildMatrixReal(target);
-      if (!realRows) return;
 
-      // compute preserved progress ratio using stored rows if available
-      const rowsBefore = anim._qrRows;
-      const modulesBefore = (rowsBefore && rowsBefore.length) ? rowsBefore.length * rowsBefore[0].length : 1;
-      const revealed = typeof anim._revealIndex === 'number' ? anim._revealIndex : modulesBefore;
-      const ratio = Math.min(1, revealed / modulesBefore);
+      (async ()=>{
+        // Try to obtain the project's character-rendered matrix first (best visual parity)
+        let realRows = null;
+        try {
+          realRows = await tryRenderWithUtils(target);
+        } catch (e) { realRows = null; }
 
-      // render real matrix with initial reveal count scaled
-      const totalNew = realRows.length * realRows[0].length;
-      const initialRevealCount = Math.floor(ratio * totalNew);
-      renderInto(anim, realRows, initialRevealCount);
+        // If the utils approach didn't yield rows, fall back to qrcode-generator matrix
+        if (!realRows) realRows = buildMatrixReal(target);
+        if (!realRows) return;
 
-      // continue reveal from initialRevealCount
-      anim._revealIndex = initialRevealCount;
-      const desiredReal = anim._desiredDuration || document._qrDesiredDuration || null;
-      setTimeout(()=> animateReveal(anim, { duration: desiredReal }), 40);
+        // compute preserved progress ratio using stored rows if available
+        const rowsBefore = anim._qrRows;
+        const modulesBefore = (rowsBefore && rowsBefore.length && rowsBefore[0].length) ? rowsBefore.length * rowsBefore[0].length : 1;
+        const revealed = typeof anim._revealIndex === 'number' ? anim._revealIndex : modulesBefore;
+        const ratio = Math.min(1, revealed / modulesBefore);
+
+        // render real matrix with initial reveal count scaled
+        const totalNew = realRows.length * (realRows[0] ? realRows[0].length : realRows.length);
+        const initialRevealCount = Math.floor(ratio * totalNew);
+        renderInto(anim, realRows, initialRevealCount);
+
+        // continue reveal from initialRevealCount
+        anim._revealIndex = initialRevealCount;
+        const desiredReal = anim._desiredDuration || document._qrDesiredDuration || null;
+        setTimeout(()=> animateReveal(anim, { duration: desiredReal }), 40);
+      })();
     });
   }
 
