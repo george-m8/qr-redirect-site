@@ -377,6 +377,9 @@ hr {
 }
 
 @media (max-width: 340px) {
+  body {
+    padding:0;
+  }
   .receipt-wrapper{
     padding:0;
   }
