@@ -48,7 +48,7 @@ button {
   background: transparent;
   cursor: pointer;
   letter-spacing: 1px;
-  transition: letter-spacing 0.2s;
+  transition: letter-spacing 0.2s ease;
 }
 
 button:hover {
@@ -66,8 +66,8 @@ button:disabled {
 
 .secondary-btn {
     font-size: 12px;
-    padding: 8px 16px;
-    margin: 0 5px;
+    padding: 2px 4px;
+    margin: 0 12px;
 }
 
 #save-status {
