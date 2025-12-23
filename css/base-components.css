@@ -27,6 +27,12 @@ body {
     display:inline-block;
 }
 
+p a{
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+}
+
 
 .small-text {
     font-size: 10px;
