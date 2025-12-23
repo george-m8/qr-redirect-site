@@ -24,6 +24,42 @@
   const COOKIE_NAME = 'sa1l_consent';
   const COOKIE_DURATION = 365; // days
 
+  // EU/EEA countries that require GDPR consent
+  const EU_EEA_COUNTRIES = [
+    'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU',
+    'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES',
+    'SE', 'IS', 'LI', 'NO', 'GB' // GB included for UK GDPR
+  ];
+
+  // Check if user is in a region requiring consent banner
+  function requiresConsent() {
+    // Check Cloudflare country header (set via meta tag, cookie, or JS variable)
+    
+    // Option 1: Meta tag (e.g., <meta name="cf-country" content="US">)
+    const metaCountry = document.querySelector('meta[name="cf-country"]')?.content;
+    if (metaCountry) {
+      const country = metaCountry.toUpperCase();
+      return EU_EEA_COUNTRIES.includes(country);
+    }
+    
+    // Option 2: Cookie (e.g., cf_country=US)
+    const cookieCountry = getCookie('cf_country');
+    if (cookieCountry) {
+      const country = cookieCountry.toUpperCase();
+      return EU_EEA_COUNTRIES.includes(country);
+    }
+    
+    // Option 3: Window variable (e.g., window.CF_COUNTRY = 'US')
+    if (window.CF_COUNTRY) {
+      const country = window.CF_COUNTRY.toUpperCase();
+      return EU_EEA_COUNTRIES.includes(country);
+    }
+    
+    // Default: show banner if we can't determine location (safer for compliance)
+    console.log('[Consent] Could not determine user location, showing banner to be safe');
+    return true;
+  }
+
   // Initialize Google Consent Mode (must run before any Google tags)
   function initGoogleConsent() {
     window.dataLayer = window.dataLayer || [];
@@ -178,11 +214,25 @@
       loadConsentScripts(saved);
       console.log('[Consent] Using saved preferences:', saved);
     } else {
-      // No saved consent, show modal
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', showConsentModal);
+      // No saved consent - check if user is in region requiring consent
+      if (requiresConsent()) {
+        // EU/EEA user, show modal
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', showConsentModal);
+        } else {
+          showConsentModal();
+        }
       } else {
-        showConsentModal();
+        // Non-EU/EEA user, auto-accept all (no banner needed)
+        console.log('[Consent] User not in EU/EEA, auto-granting consent');
+        const consent = {
+          necessary: true,
+          analytics: true,
+          ads: true,
+          personalization: true
+        };
+        saveConsent(consent);
+        // No need to show modal
       }
     }
 
