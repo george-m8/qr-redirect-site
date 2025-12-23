@@ -31,5 +31,6 @@
   display: block;
   text-align: center;
   width: 100%;
-  min-height: 1rem;
+  min-width: 100px;
+  min-height: 64px;
 }
