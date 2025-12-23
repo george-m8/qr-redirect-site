@@ -139,33 +139,73 @@
   }
 
   // animate reveal for character-based `.qr-display` markup
+  // This schedules reveal steps iteratively so the pacing can be adjusted mid-flight
   function animateReveal(container, opts){
     const rows = container._qrRows;
     const rowEls = container._rowEls;
     if (!rows || !rowEls || !rows.length) return;
-    const step = opts && opts.stepMs ? opts.stepMs : 6;
     const cols = rows[0].length;
     const total = rows.length * cols;
     let start = (typeof container._revealIndex === 'number') ? container._revealIndex : 0;
     container._revealIndex = start;
-    for (let i=start;i<total;i++){
-      (function(i){
-        setTimeout(()=>{
-          const r = Math.floor(i / cols);
-          const c = i % cols;
-          const row = rows[r];
-          const rowEl = rowEls[r];
-          if (!rowEl) return;
-          // update the two-char block at position c
-          const before = rowEl.textContent.slice(0, c*2);
-          const block = row[c] ? '██' : '  ';
-          const after = rowEl.textContent.slice((c+1)*2);
-          rowEl.textContent = before + block + after;
-          container._revealIndex = i + 1;
-        }, (i - start) * step);
-      })(i);
+    container._animating = true;
+
+    function step(){
+      if (!container._animating) return;
+      if (container._revealIndex >= total) { container._animating = false; return; }
+
+      // compute current stepMs: prefer explicit opts.stepMs, then a desired duration, then default
+      const desiredDuration = (opts && opts.duration) || container._desiredDuration;
+      let stepMs = (opts && opts.stepMs) ? opts.stepMs : (desiredDuration ? Math.max(2, Math.floor(desiredDuration / total)) : 6);
+
+      const i = container._revealIndex;
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      const row = rows[r];
+      const rowEl = rowEls[r];
+      if (rowEl) {
+        const before = rowEl.textContent.slice(0, c*2);
+        const block = row[c] ? '██' : '  ';
+        const after = rowEl.textContent.slice((c+1)*2);
+        rowEl.textContent = before + block + after;
+      }
+      container._revealIndex = i + 1;
+      container._animTimer = setTimeout(step, stepMs);
     }
+
+    // start stepping
+    step();
   }
+
+  // Listen for page transition timing so we can pace reveal to finish while overlay is visible
+  window.addEventListener('page-transition:timing', (e) => {
+    try {
+      const detail = e && e.detail ? e.detail : null;
+      const totalMs = detail && detail.totalMs ? detail.totalMs : null;
+      // leave a small buffer so the reveal completes just before overlay hides
+      const buffer = 40;
+      const desired = totalMs ? Math.max(0, totalMs - buffer) : null;
+      // store on all existing spinner-animation containers
+      const anims = document.querySelectorAll('.spinner-animation');
+      anims.forEach(a => { a._desiredDuration = desired; });
+      // also store default for future containers
+      document._qrDesiredDuration = desired;
+    } catch (err) {}
+  });
+
+  // when a new spinner-animation is created, set its desired duration from document default
+  const _observer = new MutationObserver((mutations)=>{
+    for (const m of mutations) {
+      for (const n of m.addedNodes) {
+        if (!(n instanceof HTMLElement)) continue;
+        const found = n.matches && n.matches('.spinner-animation') ? n : (n.querySelector && n.querySelector('.spinner-animation'));
+        if (found) {
+          found._desiredDuration = document._qrDesiredDuration || null;
+        }
+      }
+    }
+  });
+  _observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
 
   // Try to render using project's `renderQRAsCharacters` helper to match styles
   async function tryRenderWithUtils(text){

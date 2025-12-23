@@ -70,10 +70,18 @@
 
       // Hold briefly to ensure the snap is painted, then begin fading the overlay
       setTimeout(() => {
-        if (overlayEl) {
+          if (overlayEl) {
           // start overlay fade
-          overlayEl.classList.remove('visible');
           const overlayFadeMs = parseDuration(getComputedStyle(overlayEl).transitionDuration) || OVERLAY_FADE_MS;
+
+          // dispatch timing info so other components (e.g. QR loader) can pace animations
+          try {
+            const totalVisibleMs = HOLD_MS + overlayFadeMs;
+            window.dispatchEvent(new CustomEvent('page-transition:timing', { detail: { holdMs: HOLD_MS, overlayFadeMs, totalMs: totalVisibleMs } }));
+            window.dispatchEvent(new CustomEvent('page-transition:will-hide', { detail: { overlayFadeMs } }));
+          } catch (e) {}
+
+          overlayEl.classList.remove('visible');
 
           // after fade completes and element removed, animate wrapper to target width
           setTimeout(() => {
@@ -86,6 +94,8 @@
               wrapper.style.maxWidth = targetWidth + 'px';
               setTimeout(() => { try { wrapper.style.maxWidth = ''; } catch (e) {} }, wrapperTransMs + 20);
             });
+            // signal end of page transition after wrapper animation completes
+            try { window.setTimeout(() => window.dispatchEvent(new CustomEvent('page-transition:ended')), wrapperTransMs + 20); } catch (e) {}
           }, overlayFadeMs + 20);
         } else {
           // No overlay — animate immediately after hold
