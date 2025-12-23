@@ -103,6 +103,29 @@
     return rows;
   }
 
+  // Parse block-style preformatted QR where each module is two characters
+  // (e.g., '██' for dark, two spaces for light) — matches `qr-display-row` output
+  function parseBlockPreToRows(preText){
+    if (!preText) return null;
+    const lines = preText.split(/\r?\n/).map(l => l.replace(/\r/g, ''))
+      .filter(l => l.trim().length > 0);
+    if (!lines.length) return null;
+    const rows = [];
+    for (const line of lines){
+      // ensure even length
+      let ln = line;
+      if (ln.length % 2 === 1) ln = ln + ' ';
+      const row = [];
+      for (let i=0;i<ln.length;i+=2){
+        const pair = ln.substr(i,2);
+        const dark = pair.indexOf('█') !== -1 || pair.indexOf('#') !== -1 || pair.indexOf('X') !== -1 || pair.indexOf('x') !== -1;
+        row.push(!!dark);
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
   // Render rows into container using the project's character-based markup
   // This keeps parity with `renderQRAsCharacters()` and `qr-render.css`.
   function renderInto(container, rows, initialRevealCount){
@@ -320,7 +343,8 @@
     // If a preformatted QR is present on the page (id="fallback-qr-pre"), use it immediately
     const preEl = document.getElementById('fallback-qr-pre');
     if (preEl && preEl.textContent && preEl.textContent.trim().length > 0) {
-      const rows = parsePreToRows(preEl.textContent);
+      // prefer block-style parsing (two-char modules) then fall back
+      const rows = parseBlockPreToRows(preEl.textContent) || parsePreToRows(preEl.textContent);
       if (rows) {
         renderInto(anim, rows, 0);
         const desired = anim._desiredDuration || document._qrDesiredDuration || null;
@@ -329,7 +353,33 @@
     } else {
       // Render fallback immediately (fast) so animation can start right away
       const fallbackText = 'https://sa1l.cc/';
-      const fallbackRows = buildFallbackMatrix(fallbackText, 21);
+      // prefer the project's canonical preformatted QR (two-char blocks) if available
+      const fallbackPre = `██████████████  ██  ████      ████  ██████████████
+██          ██  ██    ████  ████    ██          ██
+██  ██████  ██        ██████████    ██  ██████  ██
+██  ██████  ██  ██████████          ██  ██████  ██
+██  ██████  ██    ██  ██  ██        ██  ██████  ██
+██          ██          ██  ██      ██          ██
+██████████████  ██  ██  ██  ██  ██  ██████████████
+                ████      ████████                
+██  ████  ██████  ████  ██████████  ██    ██  ████
+████  ██████      ██████              ██      ██  
+██  ██    ████    ████████  ██  ████  ██          
+    ██    ██      ████    ██████████  ██  ████    
+██          ██    ██  ██      ██    ██████  ██████
+          ██    ████  ██  ██  ████  ██████      ██
+  ████  ████████        ██  ██          ██  ████  
+██    ██      ██  ████  ████      ████████      ██
+      ████  ████    ████        ██████████████████
+                ██      ████    ██      ██  ██  ██
+██████████████  ██  ██████      ██  ██  ██  ██████
+██          ██  ██  ██  ██    ████      ██    ██  
+██  ██████  ██    ██████████    ████████████      
+██  ██████  ██  ████    ██████████████  ██████████
+██  ██████  ██  ██  ████████  ████████  ██  ████  
+██          ██    ██              ████  ██  ██    
+██████████████  ████    ██  ████    ██████████████`;
+      let fallbackRows = parseBlockPreToRows(fallbackPre) || buildFallbackMatrix(fallbackText, 21);
       renderInto(anim, fallbackRows, 0);
       // start reveal of fallback (use desired duration if provided)
       const desiredFb = anim._desiredDuration || document._qrDesiredDuration || null;
