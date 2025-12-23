@@ -42,6 +42,16 @@ if (!window.firebaseAuth) {
     // Open modal when user clicks disabled input
     destinationInput.addEventListener('click', () => {
       if (destinationInput.disabled && window.openAuthModal) {
+        // Add visual feedback
+        destinationInput.style.borderColor = '#c00';
+        destinationInput.placeholder = 'Please log in first';
+        
+        // Reset after a moment
+        setTimeout(() => {
+          destinationInput.style.borderColor = '';
+          destinationInput.placeholder = '';
+        }, 2000);
+        
         window.openAuthModal();
       }
     });
