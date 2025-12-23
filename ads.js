@@ -322,10 +322,69 @@
       }
     }, 100);
     
-    // Give up after 10 seconds
+    // Give up after 10 seconds - if Google hasn't responded, treat as unfilled
     setTimeout(() => {
       clearInterval(checkInterval);
-      console.log('[ads.js] Timeout reached for slot:', options.slot, '- stopping checks');
+      
+      const isDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
+      const adStatus = insElement.getAttribute('data-ad-status');
+      
+      // If Google never marked it as done, or status is still null, treat as unfilled
+      if (!isDone || adStatus === null) {
+        console.log('[ads.js] ⏱️ Timeout reached for slot:', options.slot, '- Google never responded, treating as unfilled');
+        console.log('[ads.js] Final state:', {
+          isDone,
+          adStatus,
+          doneTime: doneTime ? 'set' : 'never set'
+        });
+        
+        placeholder.classList.add('ad-placeholder-hidden');
+        // Fallback remains visible since we never hide it
+        
+        // Set up MutationObserver to catch late responses from Google
+        console.log('[ads.js] 🔍 Setting up MutationObserver for late ad load on slot:', options.slot);
+        
+        const observer = new MutationObserver((mutations) => {
+          const nowDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
+          const nowStatus = insElement.getAttribute('data-ad-status');
+          const iframe = insElement.querySelector('iframe');
+          const hasContent = iframe && iframe.offsetHeight > 0 && iframe.offsetWidth > 0;
+          
+          // Check if ad is now filled
+          if (nowDone && nowStatus !== 'unfilled' && hasContent) {
+            console.log('[ads.js] 🎉 Late ad load detected for slot:', options.slot, '- showing ad');
+            
+            // Reverse the hiding: show placeholder, hide fallback
+            placeholder.classList.remove('ad-placeholder-hidden');
+            if (fallbackElement) {
+              fallbackElement.classList.add('hidden');
+            }
+            
+            observer.disconnect();
+          } else if (nowStatus === 'unfilled') {
+            // If Google finally responded but with unfilled, disconnect observer
+            console.log('[ads.js] Late response was unfilled for slot:', options.slot);
+            observer.disconnect();
+          }
+        });
+        
+        // Watch for attribute changes and child additions (iframe)
+        observer.observe(insElement, {
+          attributes: true,
+          attributeFilter: ['data-adsbygoogle-status', 'data-ad-status'],
+          childList: true,
+          subtree: true
+        });
+        
+        // Stop observing after 20 more seconds (30 seconds total)
+        setTimeout(() => {
+          observer.disconnect();
+          console.log('[ads.js] MutationObserver stopped for slot:', options.slot, '- max observation time reached');
+        }, 20000);
+        
+      } else {
+        console.log('[ads.js] Timeout reached for slot:', options.slot, '- but ad is done, assuming filled');
+      }
     }, 10000);
     
     return adElement;
