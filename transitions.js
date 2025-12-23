@@ -16,6 +16,10 @@
     const KEY_PX = 'receipt-prev-px';
     const NORMAL_PX = 600;
     const WIDE_PX = 720;
+    // Timing configuration (ms)
+    const HOLD_MS = 80; // wait while snapped width is painted
+    const WRAPPER_TRANS_MS = 450; // expected wrapper max-width transition duration
+    const OVERLAY_FADE_MS = 300; // should match CSS .page-transition-overlay transition
 
     function storeCurrentWidth() {
       const wrapper = document.querySelector('.receipt-wrapper');
@@ -35,12 +39,12 @@
       const renderedWide = wrapper.classList.contains('receipt-wrapper-wide');
       const targetWidth = renderedWide ? WIDE_PX : NORMAL_PX;
 
-      // Create or ensure transition overlay exists
+      // Ensure overlay exists so it can mask layout changes immediately
       ensureOverlay();
 
       // If there is no previous pixel stored, just respect server-rendered class and exit
       if (prevPx === null) {
-        // Hide overlay if present
+        // Keep overlay for a short moment then fade
         hideOverlayAfterDelay(120);
         return;
       }
@@ -48,23 +52,36 @@
       // Snap to previous width without transition
       wrapper.style.transition = 'none';
       wrapper.style.maxWidth = prevPx + 'px';
-      // force reflow
+      // force reflow so the snap is painted
       wrapper.offsetHeight;
 
-      // Schedule animation to the target width using inline styles only
-      requestAnimationFrame(() => {
-        // Re-enable CSS transition
-        wrapper.style.transition = '';
-        // Set explicit target max-width to animate towards (do not toggle classes)
-        wrapper.style.maxWidth = targetWidth + 'px';
+      // Hold briefly to ensure paint stability, then start the animated change
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          // Re-enable CSS transition (use CSS rule on .receipt-wrapper)
+          wrapper.style.transition = '';
+          // Start animating to target width (inline only)
+          wrapper.style.maxWidth = targetWidth + 'px';
 
-        // After the transition, remove the inline style so CSS rules control layout
-        setTimeout(() => {
-          wrapper.style.maxWidth = '';
-          // hide overlay after animation
-          hideOverlayAfterDelay(120);
-        }, 450);
-      });
+          // Arrange overlay fade so it finishes roughly when wrapper finishes
+          const overlayEl = document.getElementById('page-transition-overlay');
+          if (overlayEl) {
+            const overlayStartDelay = Math.max(0, WRAPPER_TRANS_MS - OVERLAY_FADE_MS);
+            setTimeout(() => {
+              overlayEl.classList.remove('visible');
+              // remove element after fade completes
+              setTimeout(() => {
+                try { overlayEl.remove(); } catch (e) {}
+              }, OVERLAY_FADE_MS + 20);
+            }, overlayStartDelay);
+          }
+
+          // After the wrapper transition, remove inline maxWidth so stylesheet controls layout
+          setTimeout(() => {
+            wrapper.style.maxWidth = '';
+          }, WRAPPER_TRANS_MS + 20);
+        });
+      }, HOLD_MS);
 
       // cleanup stored value
       try { sessionStorage.removeItem(KEY_PX); } catch {}
