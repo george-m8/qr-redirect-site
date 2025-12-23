@@ -456,3 +456,36 @@ button.qr-size-toggle:hover {
   border-bottom: 1px dashed #333;
   font-weight: bold;
 }
+
+/* Page transition overlay to mask layout jumps during navigation */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0 0 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.98));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  z-index: 9999;
+}
+.page-transition-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Optional small spinner center */
+.page-transition-overlay .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-size: 12px;
+  color: #333;
+}

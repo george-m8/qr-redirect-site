@@ -35,8 +35,13 @@
       const renderedWide = wrapper.classList.contains('receipt-wrapper-wide');
       const targetWidth = renderedWide ? WIDE_PX : NORMAL_PX;
 
+      // Create or ensure transition overlay exists
+      ensureOverlay();
+
       // If there is no previous pixel stored, just respect server-rendered class and exit
       if (prevPx === null) {
+        // Hide overlay if present
+        hideOverlayAfterDelay(120);
         return;
       }
 
@@ -56,11 +61,35 @@
         // After the transition, remove the inline style so CSS rules control layout
         setTimeout(() => {
           wrapper.style.maxWidth = '';
+          // hide overlay after animation
+          hideOverlayAfterDelay(120);
         }, 450);
       });
 
       // cleanup stored value
       try { sessionStorage.removeItem(KEY_PX); } catch {}
+    }
+
+    /* Overlay helpers */
+    function ensureOverlay() {
+      if (document.getElementById('page-transition-overlay')) return;
+      const div = document.createElement('div');
+      div.id = 'page-transition-overlay';
+      div.className = 'page-transition-overlay visible';
+      const spinner = document.createElement('div');
+      spinner.className = 'spinner';
+      spinner.textContent = '';
+      div.appendChild(spinner);
+      document.body.appendChild(div);
+    }
+
+    function hideOverlayAfterDelay(ms) {
+      const el = document.getElementById('page-transition-overlay');
+      if (!el) return;
+      el.classList.remove('visible');
+      setTimeout(() => {
+        el.remove();
+      }, Math.max(ms, 200));
     }
 
     function init() {
