@@ -122,6 +122,7 @@
     };
     
     const adElement = createAdElement(options);
+    const insElement = adElement.querySelector('.adsbygoogle');
     placeholder.appendChild(adElement);
     placeholder.classList.add('ad-placeholder-filled');
     
@@ -131,6 +132,18 @@
     } catch (e) {
       console.warn('[ads.js] AdSense push failed:', e);
     }
+    
+    // Check if ad was filled after a short delay
+    setTimeout(() => {
+      const adStatus = insElement.getAttribute('data-ad-status');
+      const adDisplay = window.getComputedStyle(insElement).display;
+      
+      // If unfilled or hidden, remove the filled class to hide placeholder
+      if (adStatus === 'unfilled' || adDisplay === 'none') {
+        placeholder.classList.remove('ad-placeholder-filled');
+        console.log('[ads.js] Ad unfilled, hiding placeholder');
+      }
+    }, 1000);
     
     return adElement;
   }
