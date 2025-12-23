@@ -90,6 +90,41 @@
   margin: 0 30px 20px 30px;
 }
 
+.auth-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.auth-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.button-icon path {
+  fill: #333;
+  transition: fill 0.2s ease;
+}
+
+.auth-buttons button:hover .button-icon path {
+  fill: #000;
+}
+
 .auth-email-section {
   padding: 15px 30px 20px 30px;
   border-top: 1px dashed #999;
