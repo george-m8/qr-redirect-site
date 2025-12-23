@@ -62,7 +62,8 @@
       window.location.href = '/';
     } else {
       // In-place QR animation: tell the QR loader to pace reveal over 5000ms
-      const desiredMs = 5000;
+      // Make ad spinner draw slower than the 5s presence so it doesn't fully complete before redirect
+      const desiredMs = 8000;
       // set a global desired duration for qr-loader to pick up for future containers
       document._qrDesiredDuration = desiredMs;
 
@@ -74,6 +75,7 @@
       notRedirectBtn.textContent = "Not redirected? Click here";
       notRedirectBtn.style.display = 'none';
       notRedirectBtn.className = 'secondary-btn';
+      notRedirectBtn.style.marginTop = '0.6rem';
       notRedirectBtn.addEventListener('click', ()=> {
         window.location.href = `/qr.html?slug=${encodeURIComponent(slug)}`;
       });

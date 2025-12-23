@@ -157,18 +157,28 @@
       // compute current stepMs. Support two-phase reveal if container._twoPhase is set.
       const two = container._twoPhase;
       let stepMs;
+      // determine modulesPerStep (how many modules to reveal each tick) for very short durations
+      let modulesPerStep = 1;
+      const desiredDurationGlobal = (opts && opts.duration) || container._desiredDuration || document._qrDesiredDuration || null;
+      if (desiredDurationGlobal && desiredDurationGlobal < 600) {
+        modulesPerStep = desiredDurationGlobal < 300 ? 6 : 3;
+      }
+
       if (two && typeof two.split === 'number' && typeof two.firstDur === 'number' && typeof two.totalDur === 'number') {
         const splitCount = Math.floor(total * two.split);
         if (container._revealIndex < splitCount) {
           // first fast phase: finish splitCount modules in firstDur
           const firstDur = two.firstDur;
-          const per = Math.max(2, Math.floor(firstDur / Math.max(1, splitCount)));
+          // compute stepMs so that we advance modulesPerStep modules per tick
+          const targetTicks = Math.max(1, Math.floor(splitCount / modulesPerStep));
+          const per = Math.max(2, Math.floor(firstDur / Math.max(1, targetTicks)));
           stepMs = (opts && opts.stepMs) ? opts.stepMs : per;
         } else {
           // second phase: remaining modules in remaining time
           const rem = total - splitCount;
           const secondDur = Math.max(40, (two.totalDur - two.firstDur));
-          const per = Math.max(2, Math.floor(secondDur / Math.max(1, rem)));
+          const targetTicks = Math.max(1, Math.floor(rem / modulesPerStep));
+          const per = Math.max(2, Math.floor(secondDur / Math.max(1, targetTicks)));
           stepMs = (opts && opts.stepMs) ? opts.stepMs : per;
         }
       } else {
@@ -177,18 +187,21 @@
         stepMs = (opts && opts.stepMs) ? opts.stepMs : (desiredDuration ? Math.max(2, Math.floor(desiredDuration / total)) : 6);
       }
 
-      const i = container._revealIndex;
-      const r = Math.floor(i / cols);
-      const c = i % cols;
-      const row = rows[r];
-      const rowEl = rowEls[r];
-      if (rowEl) {
-        const before = rowEl.textContent.slice(0, c*2);
-        const block = row[c] ? '██' : '  ';
-        const after = rowEl.textContent.slice((c+1)*2);
-        rowEl.textContent = before + block + after;
+      // reveal multiple modules per tick if modulesPerStep > 1
+      let i = container._revealIndex;
+      for (let m = 0; m < modulesPerStep && i < total; m++, i++) {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        const row = rows[r];
+        const rowEl = rowEls[r];
+        if (rowEl) {
+          const before = rowEl.textContent.slice(0, c*2);
+          const block = row[c] ? '██' : '  ';
+          const after = rowEl.textContent.slice((c+1)*2);
+          rowEl.textContent = before + block + after;
+        }
       }
-      container._revealIndex = i + 1;
+      container._revealIndex = i;
       container._animTimer = setTimeout(step, stepMs);
     }
 
