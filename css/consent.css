@@ -1,0 +1,163 @@
+/* Cookie Consent Modal - Receipt Styled */
+
+.consent-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.consent-modal.visible {
+  display: flex;
+}
+
+.consent-content {
+  background: #fff;
+  max-width: 600px;
+  width: 100%;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px dashed #999;
+  font-family: 'Courier New', Courier, monospace;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.consent-header {
+  text-align: center;
+  border-bottom: 1px dashed #999;
+  padding: 30px 30px 20px 30px;
+  border-top: 3px solid #333;
+}
+
+.consent-header::before {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.consent-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.consent-description {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.consent-body {
+  padding: 30px;
+}
+
+.consent-section {
+  margin-bottom: 20px;
+}
+
+.consent-section-title {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.consent-section-desc {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.consent-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px dashed #ddd;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.consent-option input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.consent-option input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+.consent-option-label {
+  font-size: 11px;
+  flex: 1;
+}
+
+.consent-option-name {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.consent-option-desc {
+  color: #666;
+}
+
+.consent-actions {
+  padding: 20px 30px 30px 30px;
+  text-align: center;
+  border-top: 1px dashed #999;
+}
+
+.consent-primary-btn {
+  background: #333;
+  color: #fff;
+  border: 2px solid #333;
+  padding: 12px 30px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.consent-primary-btn:hover {
+  background: #000;
+  border-color: #000;
+  letter-spacing: 3px;
+}
+
+.consent-links {
+  font-size: 11px;
+  color: #666;
+}
+
+.consent-links a {
+  /* Will inherit from p a in base-components.css */
+  margin: 0 10px;
+}
+
+#consent-custom {
+  display: none;
+}
