@@ -79,6 +79,35 @@ body {
   text-align: center;
 }
 
+/* Ad section styling */
+.ad-section {
+  border-top: 1px dashed #999;
+  border-bottom: 1px dashed #999;
+  padding: 20px 30px;
+  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.ad-title {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.ad-wrapper {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* AdSense responsive ads */
+.adsbygoogle {
+  display: block;
+  text-align: center;
+}
+
 /* Form styling */
 form {
   text-align: center;
