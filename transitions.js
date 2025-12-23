@@ -5,28 +5,24 @@
 
   (function() {
     /**
-     * Selector + session approach:
-     * - Pages that want the wide layout include an element with class `receipt-wrapper-wide-selector`.
-     * - When clicking internal links we store whether the current page was wide.
-     * - On the next page load we detect the desired (selector) state and previous state and
-     *   animate between them (both grow and shrink) by briefly applying the previous width
-     *   and then toggling the class so the CSS transition animates to the new width.
+     * Pixel-based transition approach (simplified):
+     * - `receipt-wrapper-wide` class indicates wide layout (720px).
+     * - `receipt-wrapper` alone indicates normal layout (600px).
+     * - Before internal navigation we store the current wrapper pixel width in sessionStorage.
+     * - On the next page load we snap the wrapper to the previous pixel width (inline style),
+     *   then animate to the target width inferred from whether `.receipt-wrapper-wide` is present.
      */
 
-    const KEY = 'receipt-was-wide';
+    const KEY_PX = 'receipt-prev-px';
     const NORMAL_PX = 600;
     const WIDE_PX = 720;
 
-    function wantsWideOnThisPage() {
-      return !!document.querySelector('.receipt-wrapper-wide-selector');
-    }
-
-    function storeCurrentState() {
+    function storeCurrentWidth() {
       const wrapper = document.querySelector('.receipt-wrapper');
       if (!wrapper) return;
-      const wasWide = wrapper.classList.contains('receipt-wrapper-wide');
       try {
-        sessionStorage.setItem(KEY, wasWide ? '1' : '0');
+        const rect = wrapper.getBoundingClientRect();
+        sessionStorage.setItem(KEY_PX, Math.round(rect.width).toString());
       } catch {}
     }
 
@@ -34,60 +30,44 @@
       const wrapper = document.querySelector('.receipt-wrapper');
       if (!wrapper) return;
 
-      const prev = sessionStorage.getItem(KEY);
-      const prevWasWide = prev === '1';
-      const selectorPresent = !!document.querySelector('.receipt-wrapper-wide-selector');
+      const prevPxRaw = sessionStorage.getItem(KEY_PX);
+      const prevPx = prevPxRaw ? parseInt(prevPxRaw, 10) : null;
       const renderedWide = wrapper.classList.contains('receipt-wrapper-wide');
-      const wantWide = selectorPresent || renderedWide;
+      const targetWidth = renderedWide ? WIDE_PX : NORMAL_PX;
 
-      // If no stored previous state, just apply selector state (but don't remove server-rendered class)
-      if (prev === null) {
-        if (selectorPresent && wantWide && !renderedWide) wrapper.classList.add('receipt-wrapper-wide');
-        // only remove class if the page explicitly included the selector and wants narrow
-        else if (selectorPresent && !wantWide && renderedWide) wrapper.classList.remove('receipt-wrapper-wide');
+      // If there is no previous pixel stored, just respect server-rendered class and exit
+      if (prevPx === null) {
         return;
       }
-
-      // If states match, ensure selector-driven changes are applied (don't remove server classes)
-      if (prevWasWide === wantWide) {
-        if (selectorPresent) {
-          if (wantWide) wrapper.classList.add('receipt-wrapper-wide');
-          else wrapper.classList.remove('receipt-wrapper-wide');
-        }
-        sessionStorage.removeItem(KEY);
-        return;
-      }
-
-      // States differ -> animate between prev and current
-      const prevWidth = prevWasWide ? WIDE_PX : NORMAL_PX;
 
       // Snap to previous width without transition
       wrapper.style.transition = 'none';
-      wrapper.style.maxWidth = prevWidth + 'px';
-      wrapper.offsetHeight; // force reflow
+      wrapper.style.maxWidth = prevPx + 'px';
+      // force reflow
+      wrapper.offsetHeight;
 
-      // Ensure starting state matches previous width by toggling the class appropriately
-      if (wantWide) {
-        // start narrow, then add wide class to animate
+      // If server rendered the wide class but prevPx is smaller than target, ensure starting state visually matches
+      if (prevPx < targetWidth && renderedWide) {
         wrapper.classList.remove('receipt-wrapper-wide');
-      } else {
-        // start wide, then remove wide class to animate
+      } else if (prevPx > targetWidth && !renderedWide) {
         wrapper.classList.add('receipt-wrapper-wide');
       }
 
-      // Allow the DOM to settle, then toggle to target and re-enable transitions
+      // Schedule animation to the target width
       requestAnimationFrame(() => {
-        if (wantWide) wrapper.classList.add('receipt-wrapper-wide');
-        else wrapper.classList.remove('receipt-wrapper-wide');
-
-        // Re-enable CSS transition (defined in stylesheet)
+        // Re-enable CSS transition
         wrapper.style.transition = '';
-        // Clear inline maxWidth so CSS can control the final value
-        wrapper.style.maxWidth = '';
+        // Set explicit target max-width to animate towards
+        wrapper.style.maxWidth = targetWidth + 'px';
+
+        // After the transition, remove the inline style so CSS rules control layout
+        setTimeout(() => {
+          wrapper.style.maxWidth = '';
+        }, 450);
       });
 
-      // cleanup
-      sessionStorage.removeItem(KEY);
+      // cleanup stored value
+      try { sessionStorage.removeItem(KEY_PX); } catch {}
     }
 
     function init() {
@@ -97,17 +77,16 @@
         applyWithAnimation();
       }
 
-      // Remember current state on internal navigation
+      // Remember current width on internal navigation
       document.addEventListener('click', (e) => {
         const link = e.target.closest('a[href]');
         if (!link) return;
-        // only store for in-origin navigations (same site) and non-download links
         try {
           const href = link.getAttribute('href');
           if (!href || href.startsWith('#') || link.hasAttribute('download')) return;
           const url = new URL(link.href, window.location.href);
           if (url.origin === window.location.origin) {
-            storeCurrentState();
+            storeCurrentWidth();
           }
         } catch (err) {
           // ignore
