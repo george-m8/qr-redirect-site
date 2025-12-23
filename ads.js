@@ -37,16 +37,16 @@
     title.className = 'section-title ad-title';
     title.textContent = opts.title;
     
-    // Fallback message for when ad doesn't load
+    const adWrapper = document.createElement('div');
+    adWrapper.className = 'ad-wrapper';
+    
+    // Fallback message for when ad doesn't load (positioned underneath)
     const fallback = document.createElement('div');
     fallback.className = 'ad-fallback';
     const fallbackLink = document.createElement('a');
     fallbackLink.href = 'mailto:ads@sa1l.cc';
     fallbackLink.textContent = 'advertise on this site';
     fallback.appendChild(fallbackLink);
-    
-    const adWrapper = document.createElement('div');
-    adWrapper.className = 'ad-wrapper';
     
     const ins = document.createElement('ins');
     ins.className = 'adsbygoogle';
@@ -58,9 +58,9 @@
       ins.setAttribute('data-ad-layout-key', opts.layoutKey);
     }
     
+    adWrapper.appendChild(fallback);
     adWrapper.appendChild(ins);
     container.appendChild(title);
-    container.appendChild(fallback);
     container.appendChild(adWrapper);
     
     return container;
@@ -134,6 +134,7 @@
     
     const adElement = createAdElement(options);
     const insElement = adElement.querySelector('.adsbygoogle');
+    const fallbackElement = adElement.querySelector('.ad-fallback');
     placeholder.appendChild(adElement);
     // Don't add any class yet - placeholder is visible by default
     
@@ -186,6 +187,12 @@
             if (!hasContent) {
               console.log('[ads.js] ❌ Iframe loaded but has no dimensions');
               iframeError = true;
+            } else {
+              // Iframe has content, hide fallback
+              if (fallbackElement) {
+                fallbackElement.classList.add('hidden');
+                console.log('[ads.js] Hiding fallback - ad has content');
+              }
             }
           }, 100);
         });
@@ -310,6 +317,11 @@
           console.log('  All attributes:', allAttrs);
           console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         } else {
+          // Ad filled, hide fallback
+          if (fallbackElement) {
+            fallbackElement.classList.add('hidden');
+            console.log('[ads.js] Final check: Hiding fallback - ad filled');
+          }
           console.log('[ads.js] ✓ Final check: Ad filled, keeping placeholder visible for slot:', options.slot);
         }
       }
