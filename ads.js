@@ -37,6 +37,14 @@
     title.className = 'section-title ad-title';
     title.textContent = opts.title;
     
+    // Fallback message for when ad doesn't load
+    const fallback = document.createElement('div');
+    fallback.className = 'ad-fallback';
+    const fallbackLink = document.createElement('a');
+    fallbackLink.href = 'mailto:ads@sa1l.cc';
+    fallbackLink.textContent = 'advertise on this site';
+    fallback.appendChild(fallbackLink);
+    
     const adWrapper = document.createElement('div');
     adWrapper.className = 'ad-wrapper';
     
@@ -52,6 +60,7 @@
     
     adWrapper.appendChild(ins);
     container.appendChild(title);
+    container.appendChild(fallback);
     container.appendChild(adWrapper);
     
     return container;

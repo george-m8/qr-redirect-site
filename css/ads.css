@@ -21,6 +21,36 @@
   justify-content: center;
 }
 
+/* Fallback message - shown when ad doesn't load */
+.ad-fallback {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: #999;
+  border: 1px dashed #ccc;
+  margin: 0 20px 15px 20px;
+  display: block;
+}
+
+.ad-fallback a {
+  color: #666;
+  text-decoration: none;
+  text-transform: lowercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.ad-fallback a:hover {
+  color: #333;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* Hide fallback when ad loads successfully (iframe present in ad-wrapper) */
+.ad-section:has(.ad-wrapper iframe) .ad-fallback {
+  display: none;
+}
+
 /* Ad placeholder - visible by default, hidden only when explicitly marked unfilled */
 [data-ad-placeholder].ad-placeholder-hidden {
   display: none;
