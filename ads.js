@@ -40,7 +40,7 @@
     const adWrapper = document.createElement('div');
     adWrapper.className = 'ad-wrapper';
     
-    // Fallback message for when ad doesn't load (positioned underneath)
+    // Fallback message for when ad doesn't load (shows above ad)
     const fallback = document.createElement('div');
     fallback.className = 'ad-fallback';
     const fallbackLink = document.createElement('a');

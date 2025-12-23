@@ -19,23 +19,17 @@
   min-width: 250px;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
-/* Fallback message - positioned underneath ad space */
+/* Fallback message - shows above ad space, hidden when ad loads */
 .ad-fallback {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   text-align: center;
   padding: 20px;
   font-size: 12px;
   color: #999;
-  z-index: 1;
-  pointer-events: auto;
 }
 
 /* Hide fallback when explicitly marked (JS controlled) */
@@ -57,12 +51,6 @@
   color: #333;
   font-weight: bold;
   letter-spacing: 2px;
-}
-
-/* Ad iframe sits on top */
-.adsbygoogle {
-  position: relative;
-  z-index: 2;
 }
 
 /* Ad placeholder - visible by default, hidden only when explicitly marked unfilled */
