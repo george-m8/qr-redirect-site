@@ -34,6 +34,10 @@ body {
     margin-bottom: 1rem;
 }
 
+.center-text {
+    text-align: center;
+}
+
 .light-text {
     color: #999;
 }
