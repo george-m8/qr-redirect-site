@@ -21,11 +21,9 @@
   justify-content: center;
 }
 
-/* Ad placeholder - hidden until filled */
-[data-ad-placeholder]:not(.ad-placeholder-filled) {
-  visibility: hidden;
-  position: absolute;
-  pointer-events: none;
+/* Ad placeholder - visible by default, hidden only when explicitly marked unfilled */
+[data-ad-placeholder].ad-placeholder-hidden {
+  display: none;
 }
 
 /* AdSense responsive ads */

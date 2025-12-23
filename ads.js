@@ -126,19 +126,22 @@
     const adElement = createAdElement(options);
     const insElement = adElement.querySelector('.adsbygoogle');
     placeholder.appendChild(adElement);
-    placeholder.classList.add('ad-placeholder-filled');
+    // Don't add any class yet - placeholder is visible by default
     
-    console.log('[ads.js] Placeholder marked as filled, pushing to AdSense...');
+    console.log('[ads.js] Pushing to AdSense...');
     
     // Push to AdSense queue
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       console.log('[ads.js] AdSense push completed');
     } catch (e) {
-      console.warn('[ads.js] AdSense push failed:', e);
+      // If push fails, hide the placeholder immediately
+      console.warn('[ads.js] AdSense push failed, hiding placeholder:', e);
+      placeholder.classList.add('ad-placeholder-hidden');
+      return adElement;
     }
     
-    // Wait for Google to process, then check if ad was filled
+    // Wait for Google to process, checking for unfilled indicators
     // Google sets data-ad-status="unfilled" or adds adsbygoogle-noablate class
     let checkCount = 0;
     let doneTime = null;
@@ -147,40 +150,53 @@
       const isDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
       const adStatus = insElement.getAttribute('data-ad-status');
       const hasNoAblate = insElement.classList.contains('adsbygoogle-noablate');
+      const displayStyle = window.getComputedStyle(insElement).display;
       
       console.log(`[ads.js] Check #${checkCount} - slot ${options.slot}:`, {
         isDone,
         adStatus,
         hasNoAblate,
+        displayStyle,
         insClasses: insElement.className
       });
       
-      // When done is first detected, record the time but keep checking
-      if (isDone && !doneTime) {
-        doneTime = Date.now();
-        console.log('[ads.js] AdSense marked done for slot:', options.slot, '- waiting for status...');
+      // Check for unfilled at any point
+      if (adStatus === 'unfilled' || hasNoAblate || displayStyle === 'none') {
+        clearInterval(checkInterval);
+        placeholder.classList.add('ad-placeholder-hidden');
+        console.log('[ads.js] ✗ Ad unfilled, hiding placeholder for slot:', options.slot);
+        return;
       }
       
-      // Only check status after done has been true for at least 200ms
-      // (Google needs time to set unfilled attributes after marking done)
-      if (doneTime && (Date.now() - doneTime >= 200)) {
+      // When done is first detected, record the time
+      if (isDone && !doneTime) {
+        doneTime = Date.now();
+        console.log('[ads.js] AdSense marked done for slot:', options.slot);
+      }
+      
+      // After being done for 500ms, check one final time then stop
+      if (doneTime && (Date.now() - doneTime >= 500)) {
         clearInterval(checkInterval);
-        console.log('[ads.js] AdSense processing complete for slot:', options.slot);
         
-        if (adStatus === 'unfilled' || hasNoAblate) {
-          placeholder.classList.remove('ad-placeholder-filled');
-          console.log('[ads.js] ✗ Ad unfilled, hiding placeholder for slot:', options.slot);
+        // Final check
+        const finalAdStatus = insElement.getAttribute('data-ad-status');
+        const finalNoAblate = insElement.classList.contains('adsbygoogle-noablate');
+        const finalDisplay = window.getComputedStyle(insElement).display;
+        
+        if (finalAdStatus === 'unfilled' || finalNoAblate || finalDisplay === 'none') {
+          placeholder.classList.add('ad-placeholder-hidden');
+          console.log('[ads.js] ✗ Final check: Ad unfilled, hiding placeholder for slot:', options.slot);
         } else {
-          console.log('[ads.js] ✓ Ad filled, keeping placeholder visible for slot:', options.slot);
+          console.log('[ads.js] ✓ Final check: Ad filled, keeping placeholder visible for slot:', options.slot);
         }
       }
     }, 100);
     
-    // Give up after 5 seconds
+    // Give up after 10 seconds
     setTimeout(() => {
       clearInterval(checkInterval);
       console.log('[ads.js] Timeout reached for slot:', options.slot, '- stopping checks');
-    }, 5000);
+    }, 10000);
     
     return adElement;
   }
