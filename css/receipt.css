@@ -360,6 +360,10 @@ hr {
   .qr-display-section {
     text-align: center;
   }
+
+  .qr-display-section, .qr-info-section {
+    width: 100%;
+  }
 }
 
 /* QR Size Dropdown */
