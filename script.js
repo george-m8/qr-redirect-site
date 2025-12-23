@@ -36,29 +36,6 @@ if (!window.firebaseAuth) {
     submitButton.type = 'button'; // Prevent form submission
     submitButton.onclick = () => window.openAuthModal();
   }
-  if (destinationInput) {
-    destinationInput.readOnly = true;
-    destinationInput.style.cursor = 'pointer';
-    destinationInput.style.backgroundColor = '#f5f5f5';
-    
-    // Open modal when user clicks readonly input
-    destinationInput.addEventListener('click', () => {
-      if (destinationInput.readOnly && window.openAuthModal) {
-        // Add visual feedback
-        destinationInput.style.borderColor = '#c00';
-        const originalPlaceholder = destinationInput.placeholder;
-        destinationInput.placeholder = 'Please log in first';
-        
-        // Reset after a moment
-        setTimeout(() => {
-          destinationInput.style.borderColor = '';
-          destinationInput.placeholder = originalPlaceholder;
-        }, 2000);
-        
-        window.openAuthModal();
-      }
-    });
-  }
 
   // UI elements
   const logoutBtn = document.getElementById('logout');
@@ -91,12 +68,7 @@ if (!window.firebaseAuth) {
 
       if (userInfo) userInfo.textContent = 'logged in as: ' + (user.email || user.uid);
 
-      // Enable form fields and change button to submit mode
-      if (destinationInput) {
-        destinationInput.readOnly = false;
-        destinationInput.style.cursor = '';
-        destinationInput.style.backgroundColor = '';
-      }
+      // Enable form submission
       if (submitButton) {
         submitButton.textContent = 'Generate QR';
         submitButton.type = 'submit';
@@ -111,12 +83,7 @@ if (!window.firebaseAuth) {
 
       if (userInfo) userInfo.textContent = '';
       
-      // Disable form fields and change button to login mode
-      if (destinationInput) {
-        destinationInput.readOnly = true;
-        destinationInput.style.cursor = 'pointer';
-        destinationInput.style.backgroundColor = '#f5f5f5';
-      }
+      // Change button to login mode
       if (submitButton) {
         submitButton.textContent = 'Login to Generate QR';
         submitButton.type = 'button';
