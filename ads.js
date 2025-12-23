@@ -155,15 +155,30 @@
       if (iframe && !iframe.dataset.errorChecked) {
         iframe.dataset.errorChecked = 'true';
         
+        console.log('[ads.js] Iframe detected, src:', iframe.src);
+        
         iframe.addEventListener('error', () => {
-          console.log('[ads.js] Iframe load error detected for slot:', options.slot);
+          console.log('[ads.js] ❌ Iframe load error event for slot:', options.slot);
           iframeError = true;
         });
         
-        // Check if iframe src results in 400
-        fetch(iframe.src, { method: 'HEAD', mode: 'no-cors' }).catch(() => {
-          console.log('[ads.js] Iframe src fetch failed for slot:', options.slot);
-          iframeError = true;
+        iframe.addEventListener('load', () => {
+          console.log('[ads.js] Iframe load event fired for slot:', options.slot);
+          
+          // Check if iframe has actual dimensions after load
+          setTimeout(() => {
+            const hasContent = iframe.offsetHeight > 0 && iframe.offsetWidth > 0;
+            console.log('[ads.js] Iframe dimensions after load:', {
+              width: iframe.offsetWidth,
+              height: iframe.offsetHeight,
+              hasContent
+            });
+            
+            if (!hasContent) {
+              console.log('[ads.js] ❌ Iframe loaded but has no dimensions');
+              iframeError = true;
+            }
+          }, 100);
         });
       }
     }, 50);
@@ -196,14 +211,27 @@
           allAttrs[attr.name] = attr.value;
         }
         
+        // Get iframe details if present
+        const iframe = insElement.querySelector('iframe');
+        const iframeDetails = iframe ? {
+          src: iframe.src,
+          width: iframe.offsetWidth,
+          height: iframe.offsetHeight,
+          styleWidth: iframe.style.width,
+          styleHeight: iframe.style.height,
+          attrWidth: iframe.getAttribute('width'),
+          attrHeight: iframe.getAttribute('height')
+        } : null;
+        
         console.log('[ads.js] ✗ Ad unfilled, hiding placeholder for slot:', options.slot);
-        console.log('[ads.js] Unfilled reason details:', {
-          adStatus,
-          hasNoAblate,
-          displayStyle,
-          iframeError,
-          allAttributes: allAttrs
-        });
+        console.log('[ads.js] ━━━ Unfilled Reason Details ━━━');
+        console.log('  Status:', adStatus);
+        console.log('  Has noablate class:', hasNoAblate);
+        console.log('  Display style:', displayStyle);
+        console.log('  Iframe error:', iframeError);
+        console.log('  Iframe details:', iframeDetails);
+        console.log('  All attributes:', allAttrs);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         return;
       }
       
@@ -253,14 +281,25 @@
             allAttrs[attr.name] = attr.value;
           }
           
+          const iframeDetails = iframe ? {
+            src: iframe.src,
+            width: iframe.offsetWidth,
+            height: iframe.offsetHeight,
+            styleWidth: iframe.style.width,
+            styleHeight: iframe.style.height,
+            attrWidth: iframe.getAttribute('width'),
+            attrHeight: iframe.getAttribute('height')
+          } : null;
+          
           console.log('[ads.js] ✗ Final check: Ad unfilled, hiding placeholder for slot:', options.slot);
-          console.log('[ads.js] Unfilled reason details:', {
-            finalAdStatus,
-            finalNoAblate,
-            finalDisplay,
-            iframeHasError,
-            allAttributes: allAttrs
-          });
+          console.log('[ads.js] ━━━ Final Unfilled Reason Details ━━━');
+          console.log('  Status:', finalAdStatus);
+          console.log('  Has noablate class:', finalNoAblate);
+          console.log('  Display style:', finalDisplay);
+          console.log('  Iframe error:', iframeHasError);
+          console.log('  Iframe details:', iframeDetails);
+          console.log('  All attributes:', allAttrs);
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         } else {
           console.log('[ads.js] ✓ Final check: Ad filled, keeping placeholder visible for slot:', options.slot);
         }
