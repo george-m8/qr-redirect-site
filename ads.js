@@ -128,6 +128,9 @@
     placeholder.appendChild(adElement);
     // Don't add any class yet - placeholder is visible by default
     
+    // Track if iframe returns error
+    let iframeError = false;
+    
     console.log('[ads.js] Pushing to AdSense...');
     
     // Push to AdSense queue
@@ -145,6 +148,28 @@
     // Google sets data-ad-status="unfilled" or adds adsbygoogle-noablate class
     let checkCount = 0;
     let doneTime = null;
+    
+    // Monitor iframe for errors (check periodically since iframe is added async)
+    const iframeCheckInterval = setInterval(() => {
+      const iframe = insElement.querySelector('iframe');
+      if (iframe && !iframe.dataset.errorChecked) {
+        iframe.dataset.errorChecked = 'true';
+        
+        iframe.addEventListener('error', () => {
+          console.log('[ads.js] Iframe load error detected for slot:', options.slot);
+          iframeError = true;
+        });
+        
+        // Check if iframe src results in 400
+        fetch(iframe.src, { method: 'HEAD', mode: 'no-cors' }).catch(() => {
+          console.log('[ads.js] Iframe src fetch failed for slot:', options.slot);
+          iframeError = true;
+        });
+      }
+    }, 50);
+    
+    setTimeout(() => clearInterval(iframeCheckInterval), 3000);
+    
     const checkInterval = setInterval(() => {
       checkCount++;
       const isDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
@@ -161,7 +186,7 @@
       });
       
       // Check for unfilled at any point
-      if (adStatus === 'unfilled' || hasNoAblate || displayStyle === 'none') {
+      if (adStatus === 'unfilled' || hasNoAblate || displayStyle === 'none' || iframeError) {
         clearInterval(checkInterval);
         placeholder.classList.add('ad-placeholder-hidden');
         
@@ -176,6 +201,7 @@
           adStatus,
           hasNoAblate,
           displayStyle,
+          iframeError,
           allAttributes: allAttrs
         });
         return;
@@ -187,9 +213,9 @@
         console.log('[ads.js] AdSense marked done for slot:', options.slot);
       }
       
-      // After being done for 2000ms (2 seconds), stop checking and assume filled
+      // After being done for 4000ms (4 seconds), stop checking and assume filled
       // Google should have set unfilled status by then if it was going to
-      if (doneTime && (Date.now() - doneTime >= 2000)) {
+      if (doneTime && (Date.now() - doneTime >= 4000)) {
         clearInterval(checkInterval);
         
         // One final check
@@ -199,17 +225,22 @@
         
         // Check if iframe actually has content
         const iframe = insElement.querySelector('iframe');
-        const iframeHasError = iframe && (
+        const iframeHasError = iframeError || (iframe && (
           iframe.offsetHeight === 0 || 
           iframe.style.height === '0px' ||
-          iframe.getAttribute('height') === '0'
-        );
+          iframe.getAttribute('height') === '0' ||
+          iframe.offsetWidth === 0 ||
+          iframe.style.width === '0px' ||
+          iframe.getAttribute('width') === '0'
+        ));
         
         console.log('[ads.js] Final check details:', {
           finalAdStatus,
           finalNoAblate,
           finalDisplay,
+          iframeError,
           iframeHeight: iframe ? iframe.offsetHeight : 'no iframe',
+          iframeWidth: iframe ? iframe.offsetWidth : 'no iframe',
           iframeStyle: iframe ? iframe.style.height : 'no iframe'
         });
         
