@@ -102,6 +102,11 @@ body {
   justify-content: center;
 }
 
+/* Ad placeholder - hidden until filled */
+[data-ad-placeholder]:not(.ad-placeholder-filled) {
+  display: none;
+}
+
 /* AdSense responsive ads */
 .adsbygoogle {
   display: block;

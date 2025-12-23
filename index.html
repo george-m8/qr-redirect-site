@@ -104,7 +104,10 @@
       </div>
     </div>
 
-    <!-- Ad container will be inserted here by ads.js -->
+    <!-- Ad Placeholder - auto-filled by ads.js -->
+    <div data-ad-placeholder 
+         data-ad-title="━━━ PROMOTIONS ━━━" 
+         data-ad-slot="5634500789"></div>
     
     <div class="receipt-footer"></div>
   </div>
@@ -176,24 +179,5 @@
   <script defer src="/qr-loader.js"></script>
   <script defer src="/transitions.js"></script>
   <script defer src="/ads.js"></script>
-  
-  <!-- Insert ads after DOM is ready -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      // Insert ad below form/output, above footer
-      // You can add more ads by calling SA1LAds.insertAd() with different containers
-      // Each ad should use a unique data-ad-slot from your Google AdSense dashboard
-      
-      // Index page ad (below output, above footer)
-      SA1LAds.insertAd('.receipt-wrapper', {
-        title: '━━━ PROMOTIONS ━━━',
-        slot: '5634500789'  // Replace with unique slot ID from AdSense dashboard
-      }, 'beforeend');
-      
-      // Future usage examples:
-      // Dashboard: SA1LAds.insertAd('.qr-grid', { slot: 'SLOT_ID_2' }, 'afterbegin');
-      // QR Page: SA1LAds.insertAd('#before-qr', { slot: 'SLOT_ID_3' });
-    });
-  </script>
 </body>
 </html>

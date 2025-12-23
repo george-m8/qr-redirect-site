@@ -103,10 +103,64 @@
     });
   }
 
+  /**
+   * Fills a placeholder div with an ad
+   * @param {HTMLElement} placeholder - The placeholder element
+   * @returns {HTMLElement|null} - The inserted ad element
+   */
+  function fillPlaceholder(placeholder) {
+    if (!placeholder) return null;
+    
+    // Read options from data attributes
+    const options = {
+      title: placeholder.dataset.adTitle || DEFAULT_OPTIONS.title,
+      client: placeholder.dataset.adClient || DEFAULT_OPTIONS.client,
+      slot: placeholder.dataset.adSlot || DEFAULT_OPTIONS.slot,
+      format: placeholder.dataset.adFormat || DEFAULT_OPTIONS.format,
+      layoutKey: placeholder.dataset.adLayoutKey || DEFAULT_OPTIONS.layoutKey,
+      className: placeholder.dataset.adClass || ''
+    };
+    
+    const adElement = createAdElement(options);
+    placeholder.appendChild(adElement);
+    placeholder.classList.add('ad-placeholder-filled');
+    
+    // Push to AdSense queue
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.warn('[ads.js] AdSense push failed:', e);
+    }
+    
+    return adElement;
+  }
+
+  /**
+   * Auto-detect and fill all ad placeholders on the page
+   * Looks for elements with [data-ad-placeholder] attribute
+   */
+  function fillAllPlaceholders() {
+    const placeholders = document.querySelectorAll('[data-ad-placeholder]');
+    placeholders.forEach(placeholder => {
+      if (!placeholder.classList.contains('ad-placeholder-filled')) {
+        fillPlaceholder(placeholder);
+      }
+    });
+  }
+
   // Expose API
   window.SA1LAds = {
     createAdElement,
     insertAd,
-    insertMultipleAds
+    insertMultipleAds,
+    fillPlaceholder,
+    fillAllPlaceholders
   };
+  
+  // Auto-fill placeholders when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fillAllPlaceholders);
+  } else {
+    fillAllPlaceholders();
+  }
 })();
