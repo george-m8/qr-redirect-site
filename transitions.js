@@ -38,14 +38,27 @@
       const prevPx = prevPxRaw ? parseInt(prevPxRaw, 10) : null;
       const renderedWide = wrapper.classList.contains('receipt-wrapper-wide');
       const targetWidth = renderedWide ? WIDE_PX : NORMAL_PX;
-
       // Ensure overlay exists so it can mask layout changes immediately
       ensureOverlay();
 
-      // If there is no previous pixel stored, just respect server-rendered class and exit
+      const overlayEl = document.getElementById('page-transition-overlay');
+
+      // Helper: parse CSS time strings like '0.4s' or '300ms'
+      function parseDuration(timeStr) {
+        if (!timeStr) return 0;
+        const first = timeStr.split(',')[0].trim();
+        if (first.endsWith('ms')) return parseFloat(first);
+        if (first.endsWith('s')) return parseFloat(first) * 1000;
+        return 0;
+      }
+
+      // If there is no previous pixel stored, just fade overlay and exit
       if (prevPx === null) {
-        // Keep overlay for a short moment then fade
-        hideOverlayAfterDelay(120);
+        if (overlayEl) {
+          overlayEl.classList.remove('visible');
+          const fadeMs = parseDuration(getComputedStyle(overlayEl).transitionDuration) || OVERLAY_FADE_MS;
+          setTimeout(() => { try { overlayEl.remove(); } catch (e) {} }, fadeMs + 20);
+        }
         return;
       }
 
@@ -55,36 +68,34 @@
       // force reflow so the snap is painted
       wrapper.offsetHeight;
 
-      // Hold briefly to ensure paint stability, then start the animated change
+      // Hold briefly to ensure the snap is painted, then begin fading the overlay
       setTimeout(() => {
-        requestAnimationFrame(() => {
-          // Re-enable CSS transition (use CSS rule on .receipt-wrapper)
-          wrapper.style.transition = '';
-          // Start animating to target width (inline only)
-          wrapper.style.maxWidth = targetWidth + 'px';
+        if (overlayEl) {
+          // start overlay fade
+          overlayEl.classList.remove('visible');
+          const overlayFadeMs = parseDuration(getComputedStyle(overlayEl).transitionDuration) || OVERLAY_FADE_MS;
 
-          // Arrange overlay fade so it finishes roughly when wrapper finishes.
-          // Only remove the inline maxWidth after the overlay has fully faded and been removed,
-          // to ensure the snapped/inline widths are in effect while the overlay is visible.
-          const overlayEl = document.getElementById('page-transition-overlay');
-          if (overlayEl) {
-            const overlayStartDelay = Math.max(0, WRAPPER_TRANS_MS - OVERLAY_FADE_MS);
-            setTimeout(() => {
-              overlayEl.classList.remove('visible');
-              // remove element after fade completes
-              setTimeout(() => {
-                try { overlayEl.remove(); } catch (e) {}
-                // Now that overlay is fully gone, remove the inline maxWidth so stylesheet takes over
-                try { wrapper.style.maxWidth = ''; } catch (e) {}
-              }, OVERLAY_FADE_MS + 20);
-            }, overlayStartDelay);
-          } else {
-            // No overlay to coordinate with — fallback to removing after wrapper transition
-            setTimeout(() => {
-              wrapper.style.maxWidth = '';
-            }, WRAPPER_TRANS_MS + 20);
-          }
-        });
+          // after fade completes and element removed, animate wrapper to target width
+          setTimeout(() => {
+            try { overlayEl.remove(); } catch (e) {}
+
+            // Now animate wrapper to the target size
+            wrapper.style.transition = '';
+            const wrapperTransMs = parseDuration(getComputedStyle(wrapper).transitionDuration) || WRAPPER_TRANS_MS;
+            requestAnimationFrame(() => {
+              wrapper.style.maxWidth = targetWidth + 'px';
+              setTimeout(() => { try { wrapper.style.maxWidth = ''; } catch (e) {} }, wrapperTransMs + 20);
+            });
+          }, overlayFadeMs + 20);
+        } else {
+          // No overlay — animate immediately after hold
+          wrapper.style.transition = '';
+          const wrapperTransMs = parseDuration(getComputedStyle(wrapper).transitionDuration) || WRAPPER_TRANS_MS;
+          requestAnimationFrame(() => {
+            wrapper.style.maxWidth = targetWidth + 'px';
+            setTimeout(() => { try { wrapper.style.maxWidth = ''; } catch (e) {} }, wrapperTransMs + 20);
+          });
+        }
       }, HOLD_MS);
 
       // cleanup stored value
