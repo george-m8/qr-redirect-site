@@ -115,7 +115,7 @@
       rowEl.className = 'qr-row';
       for (let c=0;c<rows[r].length;c++){
         const m = document.createElement('span');
-        m.className = 'qr-module' + (rows[r][c] ? ' on' : '');
+        m.className = 'loading-qr-module' + (rows[r][c] ? ' on' : '');
         m.dataset.index = idx.toString();
         // set initial opacity if within initialRevealCount
         if (typeof initialRevealCount === 'number' && idx < initialRevealCount) m.style.opacity = '1';
@@ -130,7 +130,7 @@
 
   // animate reveal; stores current reveal index on container._revealIndex
   function animateReveal(container, opts){
-    const modules = Array.from(container.querySelectorAll('.qr-module'));
+    const modules = Array.from(container.querySelectorAll('.loading-qr-module'));
     if (!modules.length) return;
     const step = opts && opts.stepMs ? opts.stepMs : 6;
     let start = (typeof container._revealIndex === 'number') ? container._revealIndex : 0;
@@ -141,6 +141,39 @@
         el.style.opacity = '1';
         container._revealIndex = i + 1;
       }, (i - start) * step);
+    }
+  }
+
+  // Try to render using project's `renderQRAsCharacters` helper to match styles
+  async function tryRenderWithUtils(text){
+    try {
+      if (!('import' in window)) return null;
+      const mod = await import('/utils.js');
+      // create hidden container
+      const hidden = document.createElement('div');
+      hidden.style.position = 'absolute';
+      hidden.style.left = '-9999px';
+      hidden.style.top = '0';
+      document.body.appendChild(hidden);
+      await mod.renderQRAsCharacters(text, hidden, { size: 'small' });
+      // parse generated `.qr-display .qr-display-row`
+      const rows = [];
+      const rowEls = hidden.querySelectorAll('.qr-display-row');
+      if (!rowEls || rowEls.length === 0) { hidden.remove(); return null; }
+      rowEls.forEach(el => {
+        const txt = el.textContent || '';
+        const row = [];
+        // renderQRAsCharacters uses two-char blocks for each module (██ or two spaces)
+        for (let i=0;i<txt.length;i+=2){
+          const pair = txt.substr(i,2);
+          row.push(pair === '██');
+        }
+        rows.push(row);
+      });
+      hidden.remove();
+      return rows;
+    } catch (e) {
+      return null;
     }
   }
 

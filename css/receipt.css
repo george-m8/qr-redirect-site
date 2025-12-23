@@ -529,7 +529,7 @@ button.qr-size-toggle:hover {
   display: block;
   height: auto;
 }
-.spinner-animation .qr-module {
+.spinner-animation .loading-qr-module {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -539,6 +539,6 @@ button.qr-size-toggle:hover {
   transition: opacity 80ms linear;
   border-radius: 1px;
 }
-.spinner-animation .qr-module.on {
+.spinner-animation .loading-qr-module.on {
   background: #111;
 }
