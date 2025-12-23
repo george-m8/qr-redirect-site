@@ -340,6 +340,7 @@ hr {
   align-items: center;
   flex-wrap: wrap;
   margin-top: 5px;
+  justify-content: center;
 }
 
 .url-actions a {
