@@ -256,15 +256,17 @@
       const rows = parsePreToRows(preEl.textContent);
       if (rows) {
         renderInto(anim, rows, 0);
-        setTimeout(()=> animateReveal(anim, {stepMs: 6}), 20);
+        const desired = anim._desiredDuration || document._qrDesiredDuration || null;
+        setTimeout(()=> animateReveal(anim, { duration: desired }), 20);
       }
     } else {
       // Render fallback immediately (fast) so animation can start right away
       const fallbackText = 'https://sa1l.cc/';
       const fallbackRows = buildFallbackMatrix(fallbackText, 21);
       renderInto(anim, fallbackRows, 0);
-      // start reveal of fallback
-      setTimeout(()=> animateReveal(anim, {stepMs: 6}), 20);
+      // start reveal of fallback (use desired duration if provided)
+      const desiredFb = anim._desiredDuration || document._qrDesiredDuration || null;
+      setTimeout(()=> animateReveal(anim, { duration: desiredFb }), 20);
     }
 
     // now ensure real lib; when available replace smoothly preserving progress
@@ -286,7 +288,8 @@
 
       // continue reveal from initialRevealCount
       anim._revealIndex = initialRevealCount;
-      setTimeout(()=> animateReveal(anim, {stepMs: 6}), 40);
+      const desiredReal = anim._desiredDuration || document._qrDesiredDuration || null;
+      setTimeout(()=> animateReveal(anim, { duration: desiredReal }), 40);
     });
   }
 
