@@ -37,6 +37,14 @@
   border-top: 3px solid #333;
 }
 
+/* Use same padding as receipt-header for responsive behavior */
+.consent-modal .consent-header,
+.consent-modal .consent-body,
+.consent-modal .consent-actions {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
 .consent-header::before {
   content: '###############################################';
   display: block;
@@ -94,6 +102,10 @@
   background: rgba(0, 0, 0, 0.02);
 }
 
+.consent-option input{
+    width:auto;
+}
+
 .consent-option input[type="checkbox"] {
   margin-right: 10px;
   cursor: pointer;
@@ -127,25 +139,9 @@
 }
 
 .consent-primary-btn {
-  background: #333;
-  color: #fff;
-  border: 2px solid #333;
-  padding: 12px 30px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: bold;
-  cursor: pointer;
-  font-family: 'Courier New', Courier, monospace;
-  transition: all 0.2s ease;
-  width: 100%;
-  margin-bottom: 15px;
 }
 
 .consent-primary-btn:hover {
-  background: #000;
-  border-color: #000;
-  letter-spacing: 3px;
 }
 
 .consent-links {
@@ -160,4 +156,55 @@
 
 #consent-custom {
   display: none;
+}
+
+/* Footer styling matching receipt-footer */
+.consent-footer {
+  border-top: 1px dashed #999;
+  border-bottom: 3px solid #333;
+  padding: 20px 30px 30px 30px;
+  text-align: center;
+}
+
+.consent-footer::after {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+/* Responsive padding - match receipt.css behavior */
+@media (max-width: 650px) {
+  .consent-modal .consent-header,
+  .consent-modal .consent-body,
+  .consent-modal .consent-actions,
+  .consent-modal .consent-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .consent-modal .consent-header,
+  .consent-modal .consent-body,
+  .consent-modal .consent-actions,
+  .consent-modal .consent-footer {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .consent-modal .consent-header {
+    padding-top: 20px;
+    padding-bottom: 15px;
+  }
+  
+  .consent-modal .consent-footer {
+    padding-top: 15px;
+    padding-bottom: 20px;
+  }
 }

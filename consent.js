@@ -189,11 +189,13 @@
     // Set up event listeners
     document.addEventListener('DOMContentLoaded', () => {
       const acceptBtn = document.getElementById('consent-accept-all');
+      const acceptCustomBtn = document.getElementById('consent-accept-all-custom');
       const rejectLink = document.getElementById('consent-reject-all');
       const customizeLink = document.getElementById('consent-customize');
       const saveCustomBtn = document.getElementById('consent-save-custom');
 
       if (acceptBtn) acceptBtn.addEventListener('click', acceptAll);
+      if (acceptCustomBtn) acceptCustomBtn.addEventListener('click', acceptAll);
       if (rejectLink) rejectLink.addEventListener('click', (e) => { e.preventDefault(); rejectAll(); });
       if (customizeLink) customizeLink.addEventListener('click', (e) => { e.preventDefault(); showCustomize(); });
       if (saveCustomBtn) saveCustomBtn.addEventListener('click', saveCustom);
