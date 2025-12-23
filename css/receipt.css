@@ -18,10 +18,11 @@ body {
   border-right: 1px dashed #999;
   position: relative;
   padding:2rem;
+  transition: max-width 0.4s ease;
 }
 
 .receipt-wrapper-wide {
-    max-width: 720px;
+  max-width: 720px;
 }
 
 /* Site Header */
