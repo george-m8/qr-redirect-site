@@ -103,44 +103,67 @@
     return rows;
   }
 
-  // render rows into container, optionally setting initial revealed count
+  // Render rows into container using the project's character-based markup
+  // This keeps parity with `renderQRAsCharacters()` and `qr-render.css`.
   function renderInto(container, rows, initialRevealCount){
     container.innerHTML = '';
     if (!rows) return;
-    const fragment = document.createDocumentFragment();
-    const total = rows.length * rows.length;
+    const qd = document.createElement('div');
+    qd.className = 'qr-display qr-display-small';
+    const totalCols = rows[0].length;
     let idx = 0;
+    // store rows and row elements for animation
+    container._qrRows = rows;
+    container._rowEls = [];
+
     for (let r=0;r<rows.length;r++){
-      const rowEl = document.createElement('div');
-      rowEl.className = 'qr-row';
+      const rowEl = document.createElement('span');
+      rowEl.className = 'qr-display-row';
+      // build initial text content using two-character blocks per module
+      let txt = '';
       for (let c=0;c<rows[r].length;c++){
-        const m = document.createElement('span');
-        m.className = 'loading-qr-module' + (rows[r][c] ? ' on' : '');
-        m.dataset.index = idx.toString();
-        // set initial opacity if within initialRevealCount
-        if (typeof initialRevealCount === 'number' && idx < initialRevealCount) m.style.opacity = '1';
-        fragment.appendChild(m);
-        rowEl.appendChild(m);
+        const dark = !!rows[r][c];
+        const block = dark ? '██' : '  ';
+        // if within initialRevealCount, show the block; else show spaces
+        if (typeof initialRevealCount === 'number' && idx < initialRevealCount) txt += block;
+        else txt += '  ';
         idx++;
       }
-      fragment.appendChild(rowEl);
+      rowEl.textContent = txt;
+      qd.appendChild(rowEl);
+      container._rowEls.push(rowEl);
     }
-    container.appendChild(fragment);
+    container.appendChild(qd);
+    // set current reveal index
+    container._revealIndex = (typeof initialRevealCount === 'number') ? initialRevealCount : 0;
   }
 
-  // animate reveal; stores current reveal index on container._revealIndex
+  // animate reveal for character-based `.qr-display` markup
   function animateReveal(container, opts){
-    const modules = Array.from(container.querySelectorAll('.loading-qr-module'));
-    if (!modules.length) return;
+    const rows = container._qrRows;
+    const rowEls = container._rowEls;
+    if (!rows || !rowEls || !rows.length) return;
     const step = opts && opts.stepMs ? opts.stepMs : 6;
+    const cols = rows[0].length;
+    const total = rows.length * cols;
     let start = (typeof container._revealIndex === 'number') ? container._revealIndex : 0;
     container._revealIndex = start;
-    for (let i=start;i<modules.length;i++){
-      const el = modules[i];
-      setTimeout(()=>{
-        el.style.opacity = '1';
-        container._revealIndex = i + 1;
-      }, (i - start) * step);
+    for (let i=start;i<total;i++){
+      (function(i){
+        setTimeout(()=>{
+          const r = Math.floor(i / cols);
+          const c = i % cols;
+          const row = rows[r];
+          const rowEl = rowEls[r];
+          if (!rowEl) return;
+          // update the two-char block at position c
+          const before = rowEl.textContent.slice(0, c*2);
+          const block = row[c] ? '██' : '  ';
+          const after = rowEl.textContent.slice((c+1)*2);
+          rowEl.textContent = before + block + after;
+          container._revealIndex = i + 1;
+        }, (i - start) * step);
+      })(i);
     }
   }
 
@@ -210,13 +233,14 @@
       const realRows = buildMatrixReal(target);
       if (!realRows) return;
 
-      // compute preserved progress ratio
-      const modulesBefore = anim.querySelectorAll('.qr-module').length || 1;
+      // compute preserved progress ratio using stored rows if available
+      const rowsBefore = anim._qrRows;
+      const modulesBefore = (rowsBefore && rowsBefore.length) ? rowsBefore.length * rowsBefore[0].length : 1;
       const revealed = typeof anim._revealIndex === 'number' ? anim._revealIndex : modulesBefore;
       const ratio = Math.min(1, revealed / modulesBefore);
 
       // render real matrix with initial reveal count scaled
-      const totalNew = realRows.length * realRows.length;
+      const totalNew = realRows.length * realRows[0].length;
       const initialRevealCount = Math.floor(ratio * totalNew);
       renderInto(anim, realRows, initialRevealCount);
 
