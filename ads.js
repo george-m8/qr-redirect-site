@@ -133,36 +133,26 @@
       console.warn('[ads.js] AdSense push failed:', e);
     }
     
-    // Check if ad was filled - need to wait for Google to process
-    // Use multiple checks with increasing delays as Google can be slow
-    function checkAdFilled() {
-      const adStatus = insElement.getAttribute('data-ad-status');
-      const hasNoAblate = insElement.classList.contains('adsbygoogle-noablate');
-      const iframe = insElement.querySelector('iframe');
-      const iframeHost = insElement.querySelector('[id$="_host"]');
+    // Wait for Google to process, then check if ad was filled
+    // Google sets data-ad-status="unfilled" or adds adsbygoogle-noablate class
+    const checkInterval = setInterval(() => {
+      const isDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
       
-      // Check various unfilled indicators:
-      // 1. explicit unfilled status
-      // 2. noablate class (Google adds this when no ad)
-      // 3. iframe with 0 dimensions
-      // 4. no iframe at all after processing
-      const isUnfilled = adStatus === 'unfilled' || 
-                        hasNoAblate ||
-                        (iframe && (iframe.style.height === '0px' || iframe.offsetHeight === 0)) ||
-                        (iframeHost && (iframeHost.style.height === '0px' || iframeHost.offsetHeight === 0));
-      
-      if (isUnfilled) {
-        placeholder.classList.remove('ad-placeholder-filled');
-        console.log('[ads.js] Ad unfilled, hiding placeholder');
-        return true;
+      if (isDone) {
+        clearInterval(checkInterval);
+        
+        const adStatus = insElement.getAttribute('data-ad-status');
+        const hasNoAblate = insElement.classList.contains('adsbygoogle-noablate');
+        
+        if (adStatus === 'unfilled' || hasNoAblate) {
+          placeholder.classList.remove('ad-placeholder-filled');
+          console.log('[ads.js] Ad unfilled, hiding placeholder');
+        }
       }
-      return false;
-    }
+    }, 100);
     
-    // Check at 500ms, 1500ms, and 3000ms
-    setTimeout(() => checkAdFilled(), 500);
-    setTimeout(() => checkAdFilled(), 1500);
-    setTimeout(() => checkAdFilled(), 3000);
+    // Give up after 5 seconds
+    setTimeout(() => clearInterval(checkInterval), 5000);
     
     return adElement;
   }
