@@ -164,7 +164,20 @@
       if (adStatus === 'unfilled' || hasNoAblate || displayStyle === 'none') {
         clearInterval(checkInterval);
         placeholder.classList.add('ad-placeholder-hidden');
+        
+        // Log all attributes to see if Google provides a reason
+        const allAttrs = {};
+        for (let attr of insElement.attributes) {
+          allAttrs[attr.name] = attr.value;
+        }
+        
         console.log('[ads.js] ✗ Ad unfilled, hiding placeholder for slot:', options.slot);
+        console.log('[ads.js] Unfilled reason details:', {
+          adStatus,
+          hasNoAblate,
+          displayStyle,
+          allAttributes: allAttrs
+        });
         return;
       }
       
@@ -202,7 +215,21 @@
         
         if (finalAdStatus === 'unfilled' || finalNoAblate || finalDisplay === 'none' || iframeHasError) {
           placeholder.classList.add('ad-placeholder-hidden');
+          
+          // Log all attributes for unfilled reason
+          const allAttrs = {};
+          for (let attr of insElement.attributes) {
+            allAttrs[attr.name] = attr.value;
+          }
+          
           console.log('[ads.js] ✗ Final check: Ad unfilled, hiding placeholder for slot:', options.slot);
+          console.log('[ads.js] Unfilled reason details:', {
+            finalAdStatus,
+            finalNoAblate,
+            finalDisplay,
+            iframeHasError,
+            allAttributes: allAttrs
+          });
         } else {
           console.log('[ads.js] ✓ Final check: Ad filled, keeping placeholder visible for slot:', options.slot);
         }
