@@ -469,6 +469,7 @@ button.qr-size-toggle:hover {
   position: fixed;
   inset: 0 0 0 0;
   background: #e8e8e8;
+  color: #505050
   pointer-events: none;
   opacity: 0;
   transition: opacity 300ms ease;
@@ -509,7 +510,7 @@ button.qr-size-toggle:hover {
   display: block;
   font-size: 10px;
   letter-spacing: -1px;
-  color: #333;
+  color: #505050;
   margin: 6px 0 0 0;
   overflow: hidden;
 }
