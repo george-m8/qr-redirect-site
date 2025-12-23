@@ -187,13 +187,8 @@
             if (!hasContent) {
               console.log('[ads.js] ❌ Iframe loaded but has no dimensions');
               iframeError = true;
-            } else {
-              // Iframe has content, hide fallback
-              if (fallbackElement) {
-                fallbackElement.classList.add('hidden');
-                console.log('[ads.js] Hiding fallback - ad has content');
-              }
             }
+            // Don't hide fallback here - wait for final check to confirm ad is filled
           }, 100);
         });
       }
