@@ -220,17 +220,22 @@
       // store on all existing spinner-animation containers but don't overwrite explicit durations
       const anims = document.querySelectorAll('.spinner-animation');
       anims.forEach(a => {
-        // if already explicitly set (e.g., ad page), don't overwrite unless overlay is faster
-        if (typeof a._desiredDuration === 'number') {
-          if (desired && a._desiredDuration > desired) a._desiredDuration = desired;
+        // If this spinner was explicitly given a duration by the page (ads), don't let
+        // the overlay event shorten or force a two-phase plan. Preserve explicit intent.
+        if (a._explicitDesired) {
+          // do nothing for explicit spinners
         } else {
-          a._desiredDuration = desired;
-        }
-        // set a two-phase plan so the overlay draws ~50% quickly then finishes
-        if (desired) {
-          const split = 0.5;
-          const firstDur = Math.min(600, Math.max(60, Math.floor(desired * 0.6)));
-          a._twoPhase = { split, firstDur, totalDur: desired };
+          if (typeof a._desiredDuration === 'number') {
+            if (desired && a._desiredDuration > desired) a._desiredDuration = desired;
+          } else {
+            a._desiredDuration = desired;
+          }
+          // set a two-phase plan so the overlay draws ~50% quickly then finishes
+          if (desired) {
+            const split = 0.5;
+            const firstDur = Math.min(600, Math.max(60, Math.floor(desired * 0.6)));
+            a._twoPhase = { split, firstDur, totalDur: desired };
+          }
         }
       });
       // for document-level default, only set if not explicitly provided by page (ads set this)
@@ -247,7 +252,12 @@
         if (!(n instanceof HTMLElement)) continue;
         const found = n.matches && n.matches('.spinner-animation') ? n : (n.querySelector && n.querySelector('.spinner-animation'));
         if (found) {
-          found._desiredDuration = document._qrDesiredDuration || null;
+          if (typeof document._qrDesiredDuration === 'number') {
+            found._desiredDuration = document._qrDesiredDuration;
+            found._explicitDesired = true;
+          } else {
+            found._desiredDuration = document._qrDesiredDuration || null;
+          }
         }
       }
     }
@@ -298,6 +308,14 @@
     const target = getTargetUrl();
     const path = window.location.pathname.split('/').pop();
     const isAdPage = path === 'ad.html' || path === 'ad';
+    // mark ad spinners so external events (page-transition) won't shorten them
+    anim._isAd = isAdPage;
+    // if the page provided a document-level desired duration (ads), prefer that and
+    // mark it explicit so transition events won't overwrite it
+    if (typeof document._qrDesiredDuration === 'number' && typeof anim._desiredDuration !== 'number') {
+      anim._desiredDuration = document._qrDesiredDuration;
+      anim._explicitDesired = true;
+    }
 
     // If a preformatted QR is present on the page (id="fallback-qr-pre"), use it immediately
     const preEl = document.getElementById('fallback-qr-pre');
