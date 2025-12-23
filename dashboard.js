@@ -93,10 +93,10 @@ async function loadDashboard() {
                   value="${qr.destination}"
                   data-original="${qr.destination}"
                 />
-                <p class="small-text center-text">you can edit the QR code destination as much as you want at any time. your qr code will remain the same but the destination it points to will change.</p>
                 <button onclick="updateDestination('${qr.slug}')" class="secondary-btn">Update destination</button>
                 <span id="status-${qr.slug}" style="margin-left: 10px; color: green;"></span>
-              </div>
+                <p class="small-text center-text">you can edit the QR code destination as much as you want at any time. your qr code will remain the same but the destination it points to will change.</p>
+                </div>
               <div class="small-text">
                 Created: ${new Date(qr.created_at).toLocaleString()}
               </div>
