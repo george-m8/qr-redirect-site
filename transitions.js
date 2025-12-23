@@ -63,7 +63,9 @@
           // Start animating to target width (inline only)
           wrapper.style.maxWidth = targetWidth + 'px';
 
-          // Arrange overlay fade so it finishes roughly when wrapper finishes
+          // Arrange overlay fade so it finishes roughly when wrapper finishes.
+          // Only remove the inline maxWidth after the overlay has fully faded and been removed,
+          // to ensure the snapped/inline widths are in effect while the overlay is visible.
           const overlayEl = document.getElementById('page-transition-overlay');
           if (overlayEl) {
             const overlayStartDelay = Math.max(0, WRAPPER_TRANS_MS - OVERLAY_FADE_MS);
@@ -72,14 +74,16 @@
               // remove element after fade completes
               setTimeout(() => {
                 try { overlayEl.remove(); } catch (e) {}
+                // Now that overlay is fully gone, remove the inline maxWidth so stylesheet takes over
+                try { wrapper.style.maxWidth = ''; } catch (e) {}
               }, OVERLAY_FADE_MS + 20);
             }, overlayStartDelay);
+          } else {
+            // No overlay to coordinate with — fallback to removing after wrapper transition
+            setTimeout(() => {
+              wrapper.style.maxWidth = '';
+            }, WRAPPER_TRANS_MS + 20);
           }
-
-          // After the wrapper transition, remove inline maxWidth so stylesheet controls layout
-          setTimeout(() => {
-            wrapper.style.maxWidth = '';
-          }, WRAPPER_TRANS_MS + 20);
         });
       }, HOLD_MS);
 
