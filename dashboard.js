@@ -90,7 +90,8 @@ async function loadDashboard() {
                 <input 
                   type="text" 
                   id="dest-${qr.slug}" 
-                  value="${qr.destination}" 
+                  value="${qr.destination}"
+                  data-original="${qr.destination}"
                 />
                 <button onclick="updateDestination('${qr.slug}')" class="secondary-btn">Update destination</button>
                 <span id="status-${qr.slug}" style="margin-left: 10px; color: green;"></span>
@@ -133,8 +134,20 @@ async function updateDestination(slug) {
   if (!input) return;
 
   const newDestination = input.value.trim();
+  const originalDestination = input.getAttribute('data-original');
+  
   if (!newDestination) {
     alert('Destination cannot be empty');
+    return;
+  }
+
+  // Check if destination hasn't changed
+  if (newDestination === originalDestination) {
+    status.textContent = '✓ Destination matches, not changed';
+    status.style.color = '#666';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 3000);
     return;
   }
 

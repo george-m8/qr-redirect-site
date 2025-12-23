@@ -123,6 +123,16 @@ async function updateDestination() {
     return;
   }
 
+  // Check if destination hasn't changed
+  if (newDestination === currentQRData.destination) {
+    saveStatus.textContent = '✓ Destination matches, not changed';
+    saveStatus.style.color = '#666';
+    setTimeout(() => {
+      saveStatus.textContent = '';
+    }, 3000);
+    return;
+  }
+
   if (!window.firebaseUser) {
     alert('Please log in to edit this QR code');
     window.location.href = '/';
