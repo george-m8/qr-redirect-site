@@ -28,13 +28,7 @@
   <link rel="stylesheet" href="/css/base-components.css">
   <link rel="stylesheet" href="/css/receipt.css">
 </head>
-<body>
-  <div id="page-transition-overlay" class="page-transition-overlay visible">
-    <div class="spinner" role="status" aria-live="polite">
-      <div class="spinner-animation" aria-hidden="true"></div>
-      <div class="spinner-text">--- LOADING ---</div>
-    </div>
-  </div>
+<body class="no-overlay">
   <div class="receipt-wrapper">
     <div class="receipt-header">
       <pre class="site-logo"></pre>
@@ -44,8 +38,13 @@
   
     <div class="receipt-section" style="text-align: center;">
       <div class="section-title">━━━ generating your qr code ━━━</div>
-      <p style="margin: 40px 0;">please wait a moment...</p>
-      <div id="countdown" style="font-size: 48px; font-weight: bold; margin: 20px 0;">5</div>
+      <p style="margin: 24px 0 8px 0;">please wait a moment...</p>
+      <div id="ad-spinner-container" style="margin: 8px 0 12px 0;">
+        <div class="spinner" role="status" aria-live="polite" style="width:160px;height:160px;margin:0 auto;padding:12px;">
+          <div class="spinner-animation" aria-hidden="true"></div>
+          <div class="spinner-text">Preparing QR</div>
+        </div>
+      </div>
       <p style="color: #666;">redirecting to your qr code</p>
     </div>
 
@@ -61,19 +60,18 @@
       alert('No QR code specified');
       window.location.href = '/';
     } else {
-      // Countdown from 5 to 0
-      let count = 5;
-      const countdownEl = document.getElementById('countdown');
-      
-      const timer = setInterval(() => {
-        count--;
-        countdownEl.textContent = count;
-        
-        if (count <= 0) {
-          clearInterval(timer);
-          window.location.href = `/qr.html?slug=${encodeURIComponent(slug)}`;
-        }
-      }, 1000);
+      // In-place QR animation: tell the QR loader to pace reveal over 5000ms
+      const desiredMs = 5000;
+      // set a global desired duration for qr-loader to pick up for future containers
+      document._qrDesiredDuration = desiredMs;
+
+      // also set desired on existing spinner-animation(s)
+      document.querySelectorAll('.spinner-animation').forEach(el => { el._desiredDuration = desiredMs; });
+
+      // Redirect to the full qr page after the animation completes
+      setTimeout(() => {
+        window.location.href = `/qr.html?slug=${encodeURIComponent(slug)}`;
+      }, desiredMs);
     }
   </script>
     <script defer src="/transitions.js"></script>

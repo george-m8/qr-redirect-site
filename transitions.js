@@ -38,8 +38,8 @@
       const prevPx = prevPxRaw ? parseInt(prevPxRaw, 10) : null;
       const renderedWide = wrapper.classList.contains('receipt-wrapper-wide');
       const targetWidth = renderedWide ? WIDE_PX : NORMAL_PX;
-      // Ensure overlay exists so it can mask layout changes immediately
-      ensureOverlay();
+      // If this page opted out of overlays, skip creating one
+      if (!document.body.classList.contains('no-overlay')) ensureOverlay();
 
       const overlayEl = document.getElementById('page-transition-overlay');
 
@@ -114,6 +114,7 @@
 
     /* Overlay helpers */
     function ensureOverlay() {
+      if (document.body.classList.contains('no-overlay')) return;
       if (document.getElementById('page-transition-overlay')) return;
       const div = document.createElement('div');
       div.id = 'page-transition-overlay';
