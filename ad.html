@@ -69,10 +69,20 @@
       // also set desired on existing spinner-animation(s)
       document.querySelectorAll('.spinner-animation').forEach(el => { el._desiredDuration = desiredMs; });
 
-      // Redirect to the full qr page after the animation completes
-      setTimeout(() => {
+      // Add a fallback button that appears at desiredMs so users can click if redirect fails
+      const notRedirectBtn = document.createElement('button');
+      notRedirectBtn.textContent = "Not redirected? Click here";
+      notRedirectBtn.style.display = 'none';
+      notRedirectBtn.className = 'secondary-btn';
+      notRedirectBtn.addEventListener('click', ()=> {
         window.location.href = `/qr.html?slug=${encodeURIComponent(slug)}`;
-      }, desiredMs);
+      });
+      const container = document.getElementById('ad-spinner-container');
+      if (container) container.appendChild(notRedirectBtn);
+
+      // Show the button after desiredMs, and redirect shortly after to allow click if needed
+      setTimeout(() => { notRedirectBtn.style.display = 'inline-block'; }, desiredMs);
+      setTimeout(() => { window.location.href = `/qr.html?slug=${encodeURIComponent(slug)}`; }, desiredMs + 600);
     }
   </script>
     <script defer src="/transitions.js"></script>

@@ -154,9 +154,28 @@
       if (!container._animating) return;
       if (container._revealIndex >= total) { container._animating = false; return; }
 
-      // compute current stepMs: prefer explicit opts.stepMs, then a desired duration, then default
-      const desiredDuration = (opts && opts.duration) || container._desiredDuration;
-      let stepMs = (opts && opts.stepMs) ? opts.stepMs : (desiredDuration ? Math.max(2, Math.floor(desiredDuration / total)) : 6);
+      // compute current stepMs. Support two-phase reveal if container._twoPhase is set.
+      const two = container._twoPhase;
+      let stepMs;
+      if (two && typeof two.split === 'number' && typeof two.firstDur === 'number' && typeof two.totalDur === 'number') {
+        const splitCount = Math.floor(total * two.split);
+        if (container._revealIndex < splitCount) {
+          // first fast phase: finish splitCount modules in firstDur
+          const firstDur = two.firstDur;
+          const per = Math.max(2, Math.floor(firstDur / Math.max(1, splitCount)));
+          stepMs = (opts && opts.stepMs) ? opts.stepMs : per;
+        } else {
+          // second phase: remaining modules in remaining time
+          const rem = total - splitCount;
+          const secondDur = Math.max(40, (two.totalDur - two.firstDur));
+          const per = Math.max(2, Math.floor(secondDur / Math.max(1, rem)));
+          stepMs = (opts && opts.stepMs) ? opts.stepMs : per;
+        }
+      } else {
+        // compute current stepMs: prefer explicit opts.stepMs, then a desired duration, then default
+        const desiredDuration = (opts && opts.duration) || container._desiredDuration;
+        stepMs = (opts && opts.stepMs) ? opts.stepMs : (desiredDuration ? Math.max(2, Math.floor(desiredDuration / total)) : 6);
+      }
 
       const i = container._revealIndex;
       const r = Math.floor(i / cols);
@@ -185,11 +204,26 @@
       // leave a small buffer so the reveal completes just before overlay hides
       const buffer = 40;
       const desired = totalMs ? Math.max(0, totalMs - buffer) : null;
-      // store on all existing spinner-animation containers
+      // store on all existing spinner-animation containers but don't overwrite explicit durations
       const anims = document.querySelectorAll('.spinner-animation');
-      anims.forEach(a => { a._desiredDuration = desired; });
-      // also store default for future containers
-      document._qrDesiredDuration = desired;
+      anims.forEach(a => {
+        // if already explicitly set (e.g., ad page), don't overwrite unless overlay is faster
+        if (typeof a._desiredDuration === 'number') {
+          if (desired && a._desiredDuration > desired) a._desiredDuration = desired;
+        } else {
+          a._desiredDuration = desired;
+        }
+        // set a two-phase plan so the overlay draws ~50% quickly then finishes
+        if (desired) {
+          const split = 0.5;
+          const firstDur = Math.min(600, Math.max(60, Math.floor(desired * 0.6)));
+          a._twoPhase = { split, firstDur, totalDur: desired };
+        }
+      });
+      // for document-level default, only set if not explicitly provided by page (ads set this)
+      if (!document._qrDesiredDuration || (desired && document._qrDesiredDuration > desired)) {
+        document._qrDesiredDuration = desired;
+      }
     } catch (err) {}
   });
 
