@@ -296,6 +296,8 @@
     const anim = document.querySelector('.spinner-animation');
     if (!anim) return; // nothing to render into
     const target = getTargetUrl();
+    const path = window.location.pathname.split('/').pop();
+    const isAdPage = path === 'ad.html' || path === 'ad';
 
     // If a preformatted QR is present on the page (id="fallback-qr-pre"), use it immediately
     const preEl = document.getElementById('fallback-qr-pre');
@@ -317,6 +319,10 @@
     }
 
     // now ensure real lib; when available replace smoothly preserving progress
+    // For ad pages we intentionally skip swapping in the real matrix so the fallback
+    // animation pacing (document._qrDesiredDuration) remains authoritative and slower.
+    if (isAdPage) return;
+
     ensureLib((err)=>{
       if (err) return; // keep fallback
       const realRows = buildMatrixReal(target);
