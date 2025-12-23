@@ -34,8 +34,6 @@
   padding: 20px;
   font-size: 12px;
   color: #999;
-  border: 1px dashed #ccc;
-  background: rgba(255, 255, 255, 0.95);
   z-index: 1;
   pointer-events: auto;
 }
@@ -47,10 +45,12 @@
 
 .ad-fallback a {
   color: #666;
-  text-decoration: none;
   text-transform: lowercase;
   letter-spacing: 1px;
   transition: all 0.2s ease;
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-style: dashed;
 }
 
 .ad-fallback a:hover {
@@ -66,8 +66,15 @@
 }
 
 /* Ad placeholder - visible by default, hidden only when explicitly marked unfilled */
+
+[data-ad-placeholder]{
+    opacity: 1;
+}
+
 [data-ad-placeholder].ad-placeholder-hidden {
-  display: none;
+  opacity: 0;
+  height: 0;
+  transition: opacity 0.2s ease, height 0.2s ease;
 }
 
 /* AdSense responsive ads */
