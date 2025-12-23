@@ -308,6 +308,16 @@ hr {
   gap: 20px;
 }
 
+.qr-item-container::after {
+  content: '###############################################';
+  display: block;
+  font-size: 10px;
+  letter-spacing: -1px;
+  color: #333;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
 .qr-display-section {
   flex-shrink: 0;
 }
