@@ -506,9 +506,10 @@ button.qr-size-toggle:hover {
 }
 
 .page-transition-overlay .spinner .spinner-animation {
-  width: 64px;
-  height: 8px;
-  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  display: inline-block;
+  /* container for QR modules */
+  padding: 6px;
+  background: transparent;
   border-radius: 4px;
   margin: 8px 0 6px 0;
 }
@@ -518,4 +519,26 @@ button.qr-size-toggle:hover {
   font-weight: bold;
   margin-top: 0;
   letter-spacing: 2px;
+}
+
+/* QR module grid inside spinner-animation */
+.spinner-animation {
+  line-height: 0;
+}
+.spinner-animation .qr-row {
+  display: block;
+  height: auto;
+}
+.spinner-animation .qr-module {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 1px;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 80ms linear;
+  border-radius: 1px;
+}
+.spinner-animation .qr-module.on {
+  background: #111;
 }
