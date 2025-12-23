@@ -66,7 +66,7 @@ async function loadDashboard() {
             <div class="qr-display-section">
               <div id="display-${qr.slug}"></div>
               <br>
-              <div class="vertical-flex" style="align-items: center;">
+              <div class="vertical-flex" style="gap:0px;align-items: center;">
                 <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px;">Download QR</button>
                 <div class="qr-size-dropdown" style="text-align: center; margin-top: 5px;">
                     <button class="qr-size-toggle small-text" onclick="toggleSizeDropdown('${qr.slug}')">more sizes ▾</button>
