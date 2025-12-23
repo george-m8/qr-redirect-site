@@ -91,7 +91,7 @@ async function loadDashboard() {
               </div>
             </div>
           </div>
-          <div class="qr-item-footer"></div
+          <div class="qr-item-footer"></div>
         </div>
       `).join('');
       
