@@ -306,6 +306,7 @@ hr {
 .qr-item-container {
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 .qr-item-footer::after {
