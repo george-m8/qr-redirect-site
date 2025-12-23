@@ -168,87 +168,8 @@
     <div class="receipt-footer"></div>
   </div>
 
-  <!-- Cookie Consent Modal -->
-  <div id="consent-modal" class="consent-modal">
-    <div class="consent-content">
-      <div class="consent-header">
-        <div class="consent-title">Cookie Consent</div>
-        <div class="consent-description">
-          We use cookies to improve your experience and show relevant ads.
-        </div>
-      </div>
-      
-      <!-- Main View -->
-      <div id="consent-main">
-        <div class="consent-body">
-          <div class="consent-section">
-            <div class="consent-section-title">Your Privacy Matters</div>
-            <div class="consent-section-desc">
-              We respect your privacy. Choose how we use cookies on this site.
-            </div>
-          </div>
-        </div>
-        
-        <div class="consent-actions">
-          <button id="consent-accept-all" class="consent-primary-btn">
-            Accept All Cookies
-          </button>
-          <div class="consent-links">
-            <a href="#" id="consent-reject-all">reject all</a> · 
-            <a href="#" id="consent-customize">customize preferences</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Custom Preferences View -->
-      <div id="consent-custom">
-        <div class="consent-body">
-          <div class="consent-option">
-            <input type="checkbox" id="consent-necessary" checked disabled>
-            <label for="consent-necessary" class="consent-option-label">
-              <span class="consent-option-name">Necessary</span>
-              <span class="consent-option-desc">Required for site functionality. Cannot be disabled.</span>
-            </label>
-          </div>
-
-          <div class="consent-option">
-            <input type="checkbox" id="consent-analytics">
-            <label for="consent-analytics" class="consent-option-label">
-              <span class="consent-option-name">Analytics</span>
-              <span class="consent-option-desc">Helps us understand how visitors use our site.</span>
-            </label>
-          </div>
-
-          <div class="consent-option">
-            <input type="checkbox" id="consent-ads">
-            <label for="consent-ads" class="consent-option-label">
-              <span class="consent-option-name">Advertising</span>
-              <span class="consent-option-desc">Allows us to show relevant ads and measure their performance.</span>
-            </label>
-          </div>
-
-          <div class="consent-option">
-            <input type="checkbox" id="consent-personalization">
-            <label for="consent-personalization" class="consent-option-label">
-              <span class="consent-option-name">Personalization</span>
-              <span class="consent-option-desc">Remembers your preferences and settings.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="consent-actions">
-          <button id="consent-accept-all-custom" class="consent-primary-btn">
-            Accept All Cookies
-          </button>
-          <button id="consent-save-custom" class="consent-primary-btn" style="margin-top: 10px;">
-            Save Preferences
-          </button>
-        </div>
-      </div>
-
-      <div class="consent-footer"></div>
-    </div>
-  </div>
+  <!-- Consent Modal - injected by Cloudflare Worker -->
+  <div data-include="consent-modal"></div>
 
   <script type="module" src="/qr.js"></script>
   <script defer src="/transitions.js"></script>
