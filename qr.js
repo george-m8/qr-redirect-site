@@ -192,16 +192,33 @@ async function updateDestination() {
   }
 }
 
-function copyToClipboard(type) {
+function copyToClipboard(type, btn) {
   const text = type === 'redirect' 
     ? document.getElementById('redirect-url-text').textContent
     : document.getElementById('destination-url-text').textContent;
-  
+
+  let button = btn || document.activeElement;
   copyTextToClipboard(text).then((success) => {
     if (success) {
-      alert('Copied to clipboard!');
+      if (button && button.tagName === 'BUTTON') {
+        if (!button.dataset.origText) button.dataset.origText = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        setTimeout(() => {
+          if (button.dataset.origText) button.textContent = button.dataset.origText;
+          button.classList.remove('copied');
+        }, 1500);
+      }
     } else {
-      alert('Failed to copy to clipboard');
+      if (button && button.tagName === 'BUTTON') {
+        const prev = button.textContent;
+        button.textContent = 'Failed';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = prev;
+          button.classList.remove('copied');
+        }, 1500);
+      }
     }
   });
 }

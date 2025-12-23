@@ -82,7 +82,7 @@ async function loadDashboard() {
                 <strong class="input-title">URL:</strong>
                 <div class="url-actions">
                   <a href="${getBaseUrlWrapper()}/r/${qr.slug}" target="_blank" rel="noopener noreferrer"><code>${getBaseUrlWrapper()}/r/${qr.slug}</code></a>
-                  <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}')" class="secondary-btn">Copy URL</button>
+                  <button onclick="copyToClipboard('${getBaseUrlWrapper()}/r/${qr.slug}', this)" class="secondary-btn">Copy URL</button>
                 </div>
               </div>
               <div class="qr-field">
@@ -188,12 +188,35 @@ async function updateDestination(slug) {
   }
 }
 
-function copyToClipboard(text) {
+function copyToClipboard(text, btn) {
+  // fallback to activeElement if button not passed
+  let button = btn || document.activeElement;
+  const original = button && button.tagName === 'BUTTON' ? (button.dataset.origText || button.textContent) : null;
+
   copyTextToClipboard(text).then((success) => {
     if (success) {
-      alert('URL copied to clipboard!');
+      if (button && button.tagName === 'BUTTON') {
+        // store original text if not stored
+        if (!button.dataset.origText) button.dataset.origText = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        setTimeout(() => {
+          // restore
+          if (button.dataset.origText) button.textContent = button.dataset.origText;
+          button.classList.remove('copied');
+        }, 1500);
+      }
     } else {
-      alert('Failed to copy URL');
+      // failure fallback: briefly show a failure state
+      if (button && button.tagName === 'BUTTON') {
+        const prev = button.textContent;
+        button.textContent = 'Failed';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = prev;
+          button.classList.remove('copied');
+        }, 1500);
+      }
     }
   });
 }

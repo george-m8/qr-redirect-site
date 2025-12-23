@@ -329,6 +329,12 @@ hr {
   width: fit-content;
 }
 
+/* Visual feedback for copy actions (replaces alerts) */
+.secondary-btn.copied {
+  color: #999;
+  opacity: 0.9;
+}
+
 .qr-info-section {
   flex-grow: 1;
   min-width: 0;
