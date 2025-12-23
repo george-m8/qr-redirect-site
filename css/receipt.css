@@ -370,6 +370,18 @@ hr {
   }
 }
 
+@media (max-width: 460px) {
+  .receipt-wrapper{
+    padding:1rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .receipt-wrapper{
+    padding:0;
+  }
+}
+
 /* QR Size Dropdown */
 .qr-size-dropdown {
   position: relative;
