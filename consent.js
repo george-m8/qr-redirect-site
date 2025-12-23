@@ -28,7 +28,7 @@
   const EU_EEA_COUNTRIES = [
     'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU',
     'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES',
-    'SE', 'IS', 'LI', 'NO', 'GB' // GB included for UK GDPR
+    'SE', 'IS', 'LI', 'NO', 'GB'
   ];
 
   // Check if user is in a region requiring consent banner
