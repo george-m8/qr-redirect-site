@@ -37,19 +37,22 @@ if (!window.firebaseAuth) {
     submitButton.onclick = () => window.openAuthModal();
   }
   if (destinationInput) {
-    destinationInput.disabled = true;
+    destinationInput.readOnly = true;
+    destinationInput.style.cursor = 'pointer';
+    destinationInput.style.backgroundColor = '#f5f5f5';
     
-    // Open modal when user clicks disabled input
+    // Open modal when user clicks readonly input
     destinationInput.addEventListener('click', () => {
-      if (destinationInput.disabled && window.openAuthModal) {
+      if (destinationInput.readOnly && window.openAuthModal) {
         // Add visual feedback
         destinationInput.style.borderColor = '#c00';
+        const originalPlaceholder = destinationInput.placeholder;
         destinationInput.placeholder = 'Please log in first';
         
         // Reset after a moment
         setTimeout(() => {
           destinationInput.style.borderColor = '';
-          destinationInput.placeholder = '';
+          destinationInput.placeholder = originalPlaceholder;
         }, 2000);
         
         window.openAuthModal();
@@ -89,7 +92,11 @@ if (!window.firebaseAuth) {
       if (userInfo) userInfo.textContent = 'logged in as: ' + (user.email || user.uid);
 
       // Enable form fields and change button to submit mode
-      if (destinationInput) destinationInput.disabled = false;
+      if (destinationInput) {
+        destinationInput.readOnly = false;
+        destinationInput.style.cursor = '';
+        destinationInput.style.backgroundColor = '';
+      }
       if (submitButton) {
         submitButton.textContent = 'Generate QR';
         submitButton.type = 'submit';
@@ -105,7 +112,11 @@ if (!window.firebaseAuth) {
       if (userInfo) userInfo.textContent = '';
       
       // Disable form fields and change button to login mode
-      if (destinationInput) destinationInput.disabled = true;
+      if (destinationInput) {
+        destinationInput.readOnly = true;
+        destinationInput.style.cursor = 'pointer';
+        destinationInput.style.backgroundColor = '#f5f5f5';
+      }
       if (submitButton) {
         submitButton.textContent = 'Login to Generate QR';
         submitButton.type = 'button';
