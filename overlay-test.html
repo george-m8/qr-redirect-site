@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Overlay Test — QR Loader</title>
+  <link rel="stylesheet" href="css/receipt.css">
+  <link rel="stylesheet" href="css/qr-render.css">
+  <!-- Preload QR generator lib if you want the real QR to swap in when available -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+  <style>
+    /* make the page content obvious under the overlay */
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; padding: 32px; }
+    main { max-width: 880px; margin: 0 auto; }
+    .debug-box { padding: 24px; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+    .note { margin-top: 12px; color:#666 }
+    /* ensure spinner area is centered for test page */
+    .spinner-centered { display:flex; align-items:center; justify-content:center; height:60vh; }
+  </style>
+</head>
+<body>
+
+  <!-- Server-rendered overlay (keeps `.visible` on so it does not auto-hide) -->
+  <div class="page-transition-overlay visible persistent-overlay" aria-hidden="false">
+    <div class="spinner" role="status" aria-live="polite">
+      <div class="spinner-animation">
+        <div class="loading-qr-module"></div>
+      </div>
+      <div class="spinner-text">Testing overlay animation — overlay will remain visible</div>
+    </div>
+  </div>
+
+  <main>
+    <h1>Overlay Test Page</h1>
+    <div class="debug-box">
+      <p>This page renders the page transition overlay immediately and keeps it visible so you can inspect the animated QR loader without the overlay being removed.</p>
+      <div class="note">If the real QR library loads, `qr-loader.js` will attempt to swap in the real matrix while preserving reveal progress.</div>
+    </div>
+
+    <section class="spinner-centered">
+      <!-- duplicate spinner so you can see spinner both in overlay and page content -->
+      <div class="spinner">
+        <div class="spinner-animation">
+          <div class="loading-qr-module"></div>
+        </div>
+        <div class="spinner-text">In-page spinner (for side-by-side)</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- include the project QR loader to animate the QR inside the overlay -->
+  <script src="qr-redirect-worker/src/index.js" defer></script>
+  <script src="qr-redirect-worker/src/../src/../src/??.js" defer></script>
+  <script src="qr-loader.js" defer></script>
+
+  <script>
+    // Keep the overlay visible for testing — ensure transitions.js isn't included on this page.
+    // Expose a small helper: remove overlay manually from console when you want to test hide.
+    window.__overlayEl = document.querySelector('.page-transition-overlay');
+    window.hideOverlay = function(){ const el = window.__overlayEl; if(!el) return; el.classList.remove('visible'); };
+  </script>
+</body>
+</html>
