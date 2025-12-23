@@ -216,13 +216,57 @@ function downloadQR() {
   link.click();
 }
 
+async function downloadQRSize(size, sizeName) {
+  if (!currentQRData) {
+    alert('QR code data not loaded yet');
+    return;
+  }
+  
+  try {
+    const baseUrl = getBaseUrl();
+    const shortUrl = `${baseUrl}/r/${currentQRData.slug}`;
+    const canvas = await generateQRCanvas(shortUrl, size);
+    
+    const baseFilename = generateQRFilename(currentQRData.slug, currentQRData.destination);
+    const filename = baseFilename.replace('.png', `_${sizeName}.png`);
+    
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // Close dropdown after download
+    const dropdown = document.getElementById('size-dropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  } catch (error) {
+    console.error('Failed to download QR:', error);
+    alert('Failed to generate QR code');
+  }
+}
+
+function toggleSizeDropdown() {
+  const dropdown = document.getElementById('size-dropdown');
+  if (!dropdown) return;
+  dropdown.classList.toggle('show');
+}
+
 function showError(message) {
   const errorDiv = document.getElementById('error');
   errorDiv.textContent = message;
   errorDiv.style.display = 'block';
 }
 
+// Close dropdown when clicking outside
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.qr-size-dropdown')) {
+    const dropdown = document.getElementById('size-dropdown');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+});
+
 // Make functions globally available for onclick handlers
 window.updateDestination = updateDestination;
 window.copyToClipboard = copyToClipboard;
 window.downloadQR = downloadQR;
+window.downloadQRSize = downloadQRSize;
+window.toggleSizeDropdown = toggleSizeDropdown;

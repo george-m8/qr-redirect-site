@@ -67,6 +67,13 @@ async function loadDashboard() {
               <div id="display-${qr.slug}"></div>
               <br>
               <button onclick="downloadQR('${qr.slug}', '${qr.destination}')" style="margin-top: 5px; width: 100%;">Download QR</button>
+              <div class="qr-size-dropdown" style="text-align: center; margin-top: 5px;">
+                <button class="qr-size-toggle" onclick="toggleSizeDropdown('${qr.slug}')">more sizes ▾</button>
+                <div class="qr-size-options" id="size-dropdown-${qr.slug}">
+                  <a onclick="downloadQRSize('${qr.slug}', '${qr.destination}', 512, 'medium')">medium 512px</a>
+                  <a onclick="downloadQRSize('${qr.slug}', '${qr.destination}', 1024, 'large')">large 1024px</a>
+                </div>
+              </div>
             </div>
             <div class="qr-info-section">
               <div class="qr-field">
@@ -189,12 +196,57 @@ function downloadQR(slug, destination) {
   link.click();
 }
 
+async function downloadQRSize(slug, destination, size, sizeName) {
+  try {
+    const shortUrl = `${getBaseUrl()}/r/${slug}`;
+    const canvas = await generateQRCanvas(shortUrl, size);
+    
+    const baseFilename = generateQRFilename(slug, destination);
+    const filename = baseFilename.replace('.png', `_${sizeName}.png`);
+    
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // Close dropdown after download
+    const dropdown = document.getElementById(`size-dropdown-${slug}`);
+    if (dropdown) dropdown.classList.remove('show');
+  } catch (error) {
+    console.error('Failed to download QR:', error);
+    alert('Failed to generate QR code');
+  }
+}
+
+function toggleSizeDropdown(slug) {
+  const dropdown = document.getElementById(`size-dropdown-${slug}`);
+  if (!dropdown) return;
+  
+  // Close all other dropdowns
+  document.querySelectorAll('.qr-size-options.show').forEach(d => {
+    if (d !== dropdown) d.classList.remove('show');
+  });
+  
+  dropdown.classList.toggle('show');
+}
+
 function getBaseUrlWrapper() {
   return getBaseUrl();
 }
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.qr-size-dropdown')) {
+    document.querySelectorAll('.qr-size-options.show').forEach(d => {
+      d.classList.remove('show');
+    });
+  }
+});
 
 // Make functions globally available
 window.updateDestination = updateDestination;
 window.copyToClipboard = copyToClipboard;
 window.downloadQR = downloadQR;
+window.downloadQRSize = downloadQRSize;
+window.toggleSizeDropdown = toggleSizeDropdown;
 window.getBaseUrlWrapper = getBaseUrlWrapper;

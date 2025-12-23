@@ -358,3 +358,57 @@ hr {
     text-align: center;
   }
 }
+
+/* QR Size Dropdown */
+.qr-size-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.qr-size-toggle {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #333;
+  font-size: 0.9em;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: 'Courier New', monospace;
+}
+
+.qr-size-toggle:hover {
+  font-weight: bold;
+}
+
+.qr-size-options {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1px dashed #333;
+  padding: 10px;
+  margin-top: 5px;
+  min-width: 150px;
+  z-index: 1000;
+  box-shadow: 2px 2px 0px #333;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.qr-size-options.show {
+  display: block;
+}
+
+.qr-size-options a {
+  display: block;
+  padding: 5px 0;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  cursor: pointer;
+}
+
+.qr-size-options a:hover {
+  border-bottom: 1px dashed #333;
+  font-weight: bold;
+}
