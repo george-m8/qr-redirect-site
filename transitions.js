@@ -108,9 +108,22 @@
       const div = document.createElement('div');
       div.id = 'page-transition-overlay';
       div.className = 'page-transition-overlay visible';
+      // build spinner structure matching server-rendered markup
       const spinner = document.createElement('div');
       spinner.className = 'spinner';
-      spinner.textContent = '';
+      spinner.setAttribute('role', 'status');
+      spinner.setAttribute('aria-live', 'polite');
+
+      const anim = document.createElement('div');
+      anim.className = 'spinner-animation';
+      anim.setAttribute('aria-hidden', 'true');
+
+      const text = document.createElement('div');
+      text.className = 'spinner-text';
+      text.textContent = '--- LOADING ---';
+
+      spinner.appendChild(anim);
+      spinner.appendChild(text);
       div.appendChild(spinner);
       document.body.appendChild(div);
     }
