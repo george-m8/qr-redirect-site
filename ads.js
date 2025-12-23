@@ -183,7 +183,23 @@
         const finalNoAblate = insElement.classList.contains('adsbygoogle-noablate');
         const finalDisplay = window.getComputedStyle(insElement).display;
         
-        if (finalAdStatus === 'unfilled' || finalNoAblate || finalDisplay === 'none') {
+        // Check if iframe actually has content (not a 400 or empty response)
+        const iframe = insElement.querySelector('iframe');
+        const iframeHasError = iframe && (
+          iframe.offsetHeight === 0 || 
+          iframe.style.height === '0px' ||
+          iframe.getAttribute('height') === '0'
+        );
+        
+        console.log('[ads.js] Final check details:', {
+          finalAdStatus,
+          finalNoAblate,
+          finalDisplay,
+          iframeHeight: iframe ? iframe.offsetHeight : 'no iframe',
+          iframeStyle: iframe ? iframe.style.height : 'no iframe'
+        });
+        
+        if (finalAdStatus === 'unfilled' || finalNoAblate || finalDisplay === 'none' || iframeHasError) {
           placeholder.classList.add('ad-placeholder-hidden');
           console.log('[ads.js] ✗ Final check: Ad unfilled, hiding placeholder for slot:', options.slot);
         } else {
