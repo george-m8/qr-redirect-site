@@ -478,7 +478,7 @@ button.qr-size-toggle:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 12px 20px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -486,6 +486,13 @@ button.qr-size-toggle:hover {
   font-size: 12px;
   color: #333;
   font-family: 'Courier New', Courier, monospace;
+  /* match dashboard small QR visual: dashed border and white background */
+  border: 2px dashed #999;
+  background: #fff;
+  border-radius: 4px;
+  width: 140px;
+  height: 140px;
+  box-sizing: border-box;
 }
 
 .page-transition-overlay .spinner::before,
@@ -504,11 +511,17 @@ button.qr-size-toggle:hover {
 
 .page-transition-overlay .spinner .spinner-animation {
   display: inline-block;
-  /* container for QR modules */
-  padding: 6px;
+  /* fixed square area for QR matrix (21 modules * 6px = 126px) */
+  width: 126px;
+  height: 126px;
+  padding: 0;
   background: transparent;
-  border-radius: 4px;
   margin: 8px 0 6px 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
 }
 
 .page-transition-overlay .spinner .spinner-text {
@@ -517,6 +530,19 @@ button.qr-size-toggle:hover {
   margin-top: 0;
   letter-spacing: 2px;
 }
+
+/* Loading QR module styles (dense, small) */
+.spinner-animation .loading-qr-module {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 1px;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 60ms linear;
+}
+.spinner-animation .loading-qr-module.on { background: #111; }
+.spinner-text { margin-top: 6px; }
 
 /* QR module grid inside spinner-animation */
 .spinner-animation {
