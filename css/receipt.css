@@ -479,11 +479,8 @@ button.qr-size-toggle:hover {
 }
 
 /* Optional small spinner center */
-.page-transition-overlay .spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.page-transition-overlay .spinner,
+.spinner-box {
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -496,6 +493,13 @@ button.qr-size-toggle:hover {
   border: 2px dashed #999;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+.page-transition-overlay .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .page-transition-overlay .spinner::before,
@@ -580,4 +584,17 @@ button.qr-size-toggle:hover {
   line-height: 4px !important;
   height: 4px !important;
   white-space: pre !important;
+}
+
+/* Use shared `.spinner-box` for inline spinners (no forced width/height) */
+.spinner-box { background: #fff; }
+/* ensure spinner-box children match the overlay inner sizing for QR */
+.spinner-box .spinner-animation {
+  width: 126px;
+  height: 126px;
+  padding: 0;
+  margin: 8px 0 6px 0;
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
 }
