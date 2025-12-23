@@ -23,7 +23,9 @@
 
 /* Ad placeholder - hidden until filled */
 [data-ad-placeholder]:not(.ad-placeholder-filled) {
-  display: none;
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
 }
 
 /* AdSense responsive ads */

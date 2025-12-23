@@ -141,6 +141,7 @@
     // Wait for Google to process, then check if ad was filled
     // Google sets data-ad-status="unfilled" or adds adsbygoogle-noablate class
     let checkCount = 0;
+    let doneTime = null;
     const checkInterval = setInterval(() => {
       checkCount++;
       const isDone = insElement.getAttribute('data-adsbygoogle-status') === 'done';
@@ -154,9 +155,17 @@
         insClasses: insElement.className
       });
       
-      if (isDone) {
+      // When done is first detected, record the time but keep checking
+      if (isDone && !doneTime) {
+        doneTime = Date.now();
+        console.log('[ads.js] AdSense marked done for slot:', options.slot, '- waiting for status...');
+      }
+      
+      // Only check status after done has been true for at least 200ms
+      // (Google needs time to set unfilled attributes after marking done)
+      if (doneTime && (Date.now() - doneTime >= 200)) {
         clearInterval(checkInterval);
-        console.log('[ads.js] AdSense processing done for slot:', options.slot);
+        console.log('[ads.js] AdSense processing complete for slot:', options.slot);
         
         if (adStatus === 'unfilled' || hasNoAblate) {
           placeholder.classList.remove('ad-placeholder-filled');
