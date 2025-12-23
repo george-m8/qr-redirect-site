@@ -46,18 +46,11 @@
       // force reflow
       wrapper.offsetHeight;
 
-      // If server rendered the wide class but prevPx is smaller than target, ensure starting state visually matches
-      if (prevPx < targetWidth && renderedWide) {
-        wrapper.classList.remove('receipt-wrapper-wide');
-      } else if (prevPx > targetWidth && !renderedWide) {
-        wrapper.classList.add('receipt-wrapper-wide');
-      }
-
-      // Schedule animation to the target width
+      // Schedule animation to the target width using inline styles only
       requestAnimationFrame(() => {
         // Re-enable CSS transition
         wrapper.style.transition = '';
-        // Set explicit target max-width to animate towards
+        // Set explicit target max-width to animate towards (do not toggle classes)
         wrapper.style.maxWidth = targetWidth + 'px';
 
         // After the transition, remove the inline style so CSS rules control layout
