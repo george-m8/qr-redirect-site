@@ -478,7 +478,7 @@ button.qr-size-toggle:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 8px;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -488,10 +488,7 @@ button.qr-size-toggle:hover {
   font-family: 'Courier New', Courier, monospace;
   /* match dashboard small QR visual: dashed border and white background */
   border: 2px dashed #999;
-  background: #fff;
   border-radius: 4px;
-  width: 140px;
-  height: 140px;
   box-sizing: border-box;
 }
 
@@ -520,7 +517,6 @@ button.qr-size-toggle:hover {
   box-sizing: border-box;
   /* allow either grid-of-spans or character `.qr-display` inside without wrapping */
   display: block;
-  overflow: hidden;
 }
 
 .page-transition-overlay .spinner .spinner-text {
