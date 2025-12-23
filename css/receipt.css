@@ -320,10 +320,12 @@ hr {
 
 .qr-display-section {
   flex-shrink: 0;
+  max-width: 200px;
 }
 
 .qr-info-section {
   flex-grow: 1;
+  min-width: 0;
 }
 
 .qr-field {

@@ -82,10 +82,10 @@
         <div class="section-title">━━━ your qr code ━━━</div>
         <div id="qr-canvas" style="text-align: center; margin: 20px 0;"></div>
         <p class="small-text" style="text-align: center;">(scan to test)</p>
-        <div style="text-align: center; margin-top: 15px;">
+        <div class="vertical-flex" style="text-align: center; margin-top: 15px;">
           <button onclick="downloadQR()">download qr code</button>
           <div class="qr-size-dropdown" style="margin-top: 10px;">
-            <button class="qr-size-toggle" onclick="toggleSizeDropdown()">more sizes ▾</button>
+            <button class="qr-size-toggle small-text" onclick="toggleSizeDropdown()">more sizes ▾</button>
             <div class="qr-size-options" id="size-dropdown">
               <a onclick="downloadQRSize(512, 'medium')">medium 512px</a>
               <a onclick="downloadQRSize(1024, 'large')">large 1024px</a>
