@@ -189,6 +189,8 @@ export default {
           return qrSlugFunctions.onRequestGet({ request, env, ctx, params: { slug } });
         } else if (request.method === 'DELETE') {
           return qrSlugFunctions.onRequestDelete({ request, env, ctx, params: { slug } });
+        } else if (request.method === 'PATCH') {
+          return qrSlugFunctions.onRequestPatch({ request, env, ctx, params: { slug } });
         }
       }
       
