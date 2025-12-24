@@ -63,14 +63,14 @@
 [data-ad-placeholder]{
     opacity: 1;
     max-height: 360px;
-    transition: opacity 0.2s ease, max-height 0.3s ease;
+    transition: opacity 1.8s ease, max-height 1.8s ease;
 }
 
 [data-ad-placeholder].ad-placeholder-hidden {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity 0.2s ease, max-height 0.3s ease;
+  transition: opacity 1.8s ease, max-height 1.8s ease;
 }
 
 /* AdSense responsive ads */
