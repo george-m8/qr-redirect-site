@@ -2,11 +2,12 @@ name = "sa1l-static-site"
 main = "static-site-worker.js"
 compatibility_date = "2025-12-23"
 
-# Routes - connect worker to domain
-routes = [
-  { pattern = "sa1l.cc/*", zone_name = "sa1l.cc" }
-]
+# Routes commented out - using Pages Functions (_worker.js) instead
+# This avoids Worker/Pages conflicts and simplifies deployment
+# routes = [
+#   { pattern = "sa1l.cc/*", zone_name = "sa1l.cc" }
+# ]
 
 # For pages.dev preview domain:
 # Add _worker.js symlink to your Pages project pointing to static-site-worker.js
-# Or configure via: Dashboard > Pages > qr-redirect-site > Settings > Functions
+# The _worker.js file will handle both sa1l.cc and pages.dev domains via Pages Functions

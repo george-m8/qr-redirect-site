@@ -25,8 +25,9 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
-    // Get the origin response
-    const response = await fetch(request);
+    // Get the origin response from Pages ASSETS
+    // This worker is deployed as a Pages Function via _worker.js
+    const response = await env.ASSETS.fetch(request);
     
     // Only process HTML pages
     const contentType = response.headers.get('content-type') || '';
