@@ -120,6 +120,14 @@ async function loadDashboard() {
         canvas.setAttribute('data-slug', qr.slug);
         document.body.appendChild(canvas);
       });
+
+      // Inject in-feed ads between QR items
+      if (window.SA1LAds && window.SA1LAds.injectDashboardAds) {
+        // Wait a moment for QR items to fully render
+        setTimeout(() => {
+          window.SA1LAds.injectDashboardAds();
+        }, 100);
+      }
     }
   } catch (error) {
     console.error('Failed to load dashboard:', error);

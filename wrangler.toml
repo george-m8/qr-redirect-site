@@ -2,5 +2,11 @@ name = "sa1l-static-site"
 main = "static-site-worker.js"
 compatibility_date = "2025-12-23"
 
-# No bindings needed - this worker only handles HTML partial injection
-# Routes configured in Cloudflare dashboard
+# Routes - connect worker to domain
+routes = [
+  { pattern = "sa1l.cc/*", zone_name = "sa1l.cc" }
+]
+
+# For pages.dev preview domain:
+# Add _worker.js symlink to your Pages project pointing to static-site-worker.js
+# Or configure via: Dashboard > Pages > qr-redirect-site > Settings > Functions
