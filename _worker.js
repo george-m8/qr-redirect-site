@@ -167,8 +167,9 @@ export default {
     try {
       const url = new URL(request.url);
       
-      // Skip processing for API routes - pass through to qr-redirect-worker
-      if (url.pathname.startsWith('/api/')) {
+      // Pass through to Pages Functions for API and redirect routes
+      // These are handled by /functions/api/qr.js, /functions/r/[slug].js, etc.
+      if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/r/')) {
         return env.ASSETS.fetch(request);
       }
       
