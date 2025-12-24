@@ -165,6 +165,13 @@ class IncludeHandler {
 export default {
   async fetch(request, env, ctx) {
     try {
+      const url = new URL(request.url);
+      
+      // Skip processing for API routes - pass through to qr-redirect-worker
+      if (url.pathname.startsWith('/api/')) {
+        return env.ASSETS.fetch(request);
+      }
+      
       // Get the origin response from Pages
       const response = await env.ASSETS.fetch(request);
       
