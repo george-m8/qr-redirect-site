@@ -30,7 +30,7 @@
     const path = u.pathname.split('/').pop();
     const params = u.searchParams;
 
-    if (path === 'qr.html' || path === 'ad.html'){
+    if (path === 'qr.html' || path === 'gen.html'){
       const slug = params.get('slug');
       if (slug) return `${u.origin}/r/${encodeURIComponent(slug)}`;
       return u.href;
@@ -330,7 +330,7 @@
     if (!anim) return; // nothing to render into
     const target = getTargetUrl();
     const path = window.location.pathname.split('/').pop();
-    const isAdPage = path === 'ad.html' || path === 'ad';
+    const isAdPage = path === 'gen.html' || path === 'gen';
     // mark ad spinners so external events (page-transition) won't shorten them
     anim._isAd = isAdPage;
     // if the page provided a document-level desired duration (ads), prefer that and

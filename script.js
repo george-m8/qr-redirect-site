@@ -229,6 +229,6 @@ if (!window.firebaseAuth) {
     }
     
     // Redirect to ad page with slug
-    window.location.href = `/ad.html?slug=${encodeURIComponent(slug)}`;
+    window.location.href = `/gen.html?slug=${encodeURIComponent(slug)}`;
   });
 }
