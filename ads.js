@@ -413,57 +413,71 @@
 
   /**
    * Inject in-feed ads between dashboard QR items
-   * Distributes ads evenly between .qr-item elements
+   * - Always place first ad between items 1 and 2
+   * - Place remaining ads randomly every 1-4 items after that
    */
   function injectDashboardAds() {
     const qrItems = document.querySelectorAll('.qr-item');
-    if (qrItems.length === 0) {
-      console.log('[ads.js] No .qr-item elements found for dashboard ads');
+    if (qrItems.length < 2) {
+      console.log('[ads.js] Not enough QR items for dashboard ads (need at least 2)');
       return;
     }
 
-    // Calculate spacing: distribute ads evenly
-    // For example: if 10 items and 4 ads, place ads at positions 2, 5, 7, 9
-    const totalItems = qrItems.length;
-    const totalAds = DASHBOARD_AD_SLOTS.length;
-    
-    // Only inject ads if we have enough items (at least 2 items per ad)
-    const adsToInject = Math.min(totalAds, Math.floor(totalItems / 2));
-    
-    if (adsToInject === 0) {
-      console.log('[ads.js] Not enough QR items for dashboard ads');
-      return;
-    }
+    console.log(`[ads.js] Found ${qrItems.length} QR items, injecting dashboard ads`);
 
-    console.log(`[ads.js] Injecting ${adsToInject} dashboard ads among ${totalItems} QR items`);
-
-    // Calculate positions
-    const spacing = Math.floor(totalItems / (adsToInject + 1));
+    let adsInjected = 0;
+    let currentIndex = 1; // Start after first item
     
-    for (let i = 0; i < adsToInject; i++) {
-      const adConfig = DASHBOARD_AD_SLOTS[i];
-      const position = spacing * (i + 1);
+    // Always place first ad between 1st and 2nd item
+    if (DASHBOARD_AD_SLOTS.length > 0 && qrItems.length >= 2) {
+      const adConfig = DASHBOARD_AD_SLOTS[0];
+      const targetItem = qrItems[1]; // Insert before 2nd item
       
-      if (position < totalItems) {
-        const targetItem = qrItems[position];
-        
-        // Create ad placeholder
-        const placeholder = document.createElement('div');
-        placeholder.setAttribute('data-ad-placeholder', '');
-        placeholder.setAttribute('data-ad-title', '━━━ PROMOTIONS ━━━');
-        placeholder.setAttribute('data-ad-slot', adConfig.slot);
-        placeholder.setAttribute('data-ad-layout-key', adConfig.layoutKey);
-        placeholder.classList.add('dashboard-infeed-ad');
-        
-        // Insert before the target item
-        targetItem.parentNode.insertBefore(placeholder, targetItem);
-        
-        console.log(`[ads.js] Injected ${adConfig.name} (slot ${adConfig.slot}) before item ${position}`);
-        
-        // Fill the placeholder
-        fillPlaceholder(placeholder);
-      }
+      const placeholder = document.createElement('div');
+      placeholder.setAttribute('data-ad-placeholder', '');
+      placeholder.setAttribute('data-ad-title', '━━━ PROMOTIONS ━━━');
+      placeholder.setAttribute('data-ad-slot', adConfig.slot);
+      placeholder.setAttribute('data-ad-layout-key', adConfig.layoutKey);
+      placeholder.classList.add('dashboard-infeed-ad');
+      
+      targetItem.parentNode.insertBefore(placeholder, targetItem);
+      fillPlaceholder(placeholder);
+      
+      console.log(`[ads.js] Injected ${adConfig.name} (slot ${adConfig.slot}) after item 1`);
+      adsInjected++;
+      currentIndex = 2; // Next ad can start from position 2
     }
+    
+    // Place remaining ads randomly every 1-4 items
+    for (let i = 1; i < DASHBOARD_AD_SLOTS.length && adsInjected < 4; i++) {
+      // Random spacing between 1-4 items
+      const spacing = Math.floor(Math.random() * 4) + 1;
+      currentIndex += spacing;
+      
+      // Stop if we've run out of items
+      if (currentIndex >= qrItems.length) {
+        console.log(`[ads.js] Reached end of QR items at position ${currentIndex}`);
+        break;
+      }
+      
+      const adConfig = DASHBOARD_AD_SLOTS[i];
+      const targetItem = qrItems[currentIndex];
+      
+      const placeholder = document.createElement('div');
+      placeholder.setAttribute('data-ad-placeholder', '');
+      placeholder.setAttribute('data-ad-title', '━━━ PROMOTIONS ━━━');
+      placeholder.setAttribute('data-ad-slot', adConfig.slot);
+      placeholder.setAttribute('data-ad-layout-key', adConfig.layoutKey);
+      placeholder.classList.add('dashboard-infeed-ad');
+      
+      targetItem.parentNode.insertBefore(placeholder, targetItem);
+      fillPlaceholder(placeholder);
+      
+      console.log(`[ads.js] Injected ${adConfig.name} (slot ${adConfig.slot}) after item ${currentIndex - 1}`);
+      adsInjected++;
+    }
+    
+    console.log(`[ads.js] Total dashboard ads injected: ${adsInjected}`);
   }
 
   // Expose API
