@@ -383,7 +383,7 @@
         }, 20000);
         
       } else {
-        console.log('[ads.js] Timeout reached for slot:', options.slot, '- but ad is done, assuming filled');
+        console.log('[ads.js] Timeout reached for slot:', options.slot, '- but ad is done, assuming unfilled');
       }
     }, 10000);
     
