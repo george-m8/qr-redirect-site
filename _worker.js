@@ -162,15 +162,41 @@ class IncludeHandler {
   }
 }
 
+// Import Pages Functions directly
+import qrFunctions from './functions/api/qr.js';
+import qrSlugFunctions from './functions/api/qr/[slug].js';
+import redirectFunction from './functions/r/[slug].js';
+
 export default {
   async fetch(request, env, ctx) {
     try {
       const url = new URL(request.url);
       
-      // Pass through to Pages Functions for API and redirect routes
-      // These are handled by /functions/api/qr.js, /functions/r/[slug].js, etc.
-      if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/r/')) {
-        return env.ASSETS.fetch(request);
+      // Handle API routes by calling Pages Functions directly
+      if (url.pathname === '/api/qr') {
+        if (request.method === 'GET') {
+          return qrFunctions.onRequestGet({ request, env, ctx });
+        } else if (request.method === 'POST') {
+          return qrFunctions.onRequestPost({ request, env, ctx });
+        }
+      }
+      
+      // Handle specific QR code routes
+      const qrSlugMatch = url.pathname.match(/^\/api\/qr\/([^\/]+)$/);
+      if (qrSlugMatch) {
+        const slug = qrSlugMatch[1];
+        if (request.method === 'GET') {
+          return qrSlugFunctions.onRequestGet({ request, env, ctx, params: { slug } });
+        } else if (request.method === 'DELETE') {
+          return qrSlugFunctions.onRequestDelete({ request, env, ctx, params: { slug } });
+        }
+      }
+      
+      // Handle redirects
+      const redirectMatch = url.pathname.match(/^\/r\/([^\/]+)$/);
+      if (redirectMatch) {
+        const slug = redirectMatch[1];
+        return redirectFunction.onRequest({ request, env, ctx, params: { slug } });
       }
       
       // Get the origin response from Pages
