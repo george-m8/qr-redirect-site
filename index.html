@@ -41,18 +41,11 @@
   
 </head>
 <body>
-  <div id="page-transition-overlay" class="page-transition-overlay visible">
-    <div class="spinner" role="status" aria-live="polite">
-      <div class="spinner-animation" aria-hidden="true"></div>
-      <div class="spinner-text">--- LOADING ---</div>
-    </div>
-  </div>
+  <!-- Page Overlay - injected by Cloudflare Worker -->
+  <div data-include="page-overlay"></div>
   <div class="receipt-wrapper">
-    <div class="receipt-header">
-      <pre class="site-logo"></pre>
-      <h1 class="site-logo-text">SA1L.CC</h1>
-      <div class="site-description">generate and manage short qr redirect links</div>
-    </div>
+    <!-- Site Header - injected by Cloudflare Worker -->
+    <div data-include="site-header"></div>
 
     <div id="auth">
       <div class="auth-buttons-flex">
@@ -116,67 +109,11 @@
     <div class="receipt-footer"></div>
   </div>
 
+  <!-- Firebase Init - injected by Cloudflare Worker -->
+  <div data-include="firebase-init"></div>
 
-  <!-- Firebase Auth (CDN, no build step) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signInWithPopup,
-      GoogleAuthProvider,
-      GithubAuthProvider,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-f9TGmva8BXdX6_b460tdrUkzTGkbjjw",
-      authDomain: "qr-redirect-site-1f3b9.firebaseapp.com",
-      projectId: "qr-redirect-site-1f3b9",
-      storageBucket: "qr-redirect-site-1f3b9.firebasestorage.app",
-      messagingSenderId: "897097551184",
-      appId: "1:897097551184:web:aca2f4c3aeac4f21b4b055"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Expose a tiny surface area to script.js
-    window.firebaseAuth = {
-      auth,
-      onAuthStateChanged,
-      signInWithPopup,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      GoogleAuthProvider,
-      GithubAuthProvider
-    };
-  </script>
-
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="auth-modal">
-    <div class="auth-modal-content">
-      <button id="auth-modal-close" class="auth-modal-close">&times;</button>
-      <h2>━━━ Login ━━━</h2>
-      <p class="small-text center-text">log in with:</p>
-      <div class="auth-buttons">
-        <button id="modal-login-google"><img src="/img/google.svg" alt="" class="button-icon">Google</button>
-        <button id="modal-login-github"><img src="/img/github.svg" alt="" class="button-icon">GitHub</button>
-      </div>
-      
-      <!--<div class="auth-email-section">
-        <input id="modal-email" type="email" placeholder="Email" />
-        <input id="modal-password" type="password" placeholder="Password" />
-        <div class="auth-email-buttons">
-          <button id="modal-login-email">Login</button>
-          <button id="modal-signup-email">Sign Up</button>
-        </div>
-      </div>-->
-    </div>
-  </div>
+  <!-- Auth Modal - injected by Cloudflare Worker -->
+  <div data-include="auth-modal"></div>
 
   <!-- Consent Modal - injected by Cloudflare Worker -->
   <div data-include="consent-modal"></div>

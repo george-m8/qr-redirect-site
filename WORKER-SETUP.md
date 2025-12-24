@@ -6,7 +6,27 @@ This Worker handles HTML partial includes for shared components across the stati
 
 - **HTML Partial Injection**: Injects consent modal and useful links sections via `data-include` attributes
 - **Geo-detection**: Automatically adds `<meta name="cf-country">` tag for consent.js geo-targeting
-- **Zero Build Step**: Server-side processing, no pre-processing needed
+- **Zero Runtime Overhead**: Server-side processing, no client-side JavaScript needed
+- **Build Script**: Auto-generates worker from HTML partials (single source of truth)
+
+## Quick Start
+
+```bash
+# 1. Edit HTML partials in /partials/ directory
+# 2. Build worker from partials
+node build-worker.js
+
+# 3. Deploy to Cloudflare
+wrangler deploy
+```
+
+## Workflow
+
+1. **Edit partials**: Modify any `.html` file in `/partials/` directory
+2. **Build worker**: Run `node build-worker.js` to regenerate `static-site-worker.js`
+3. **Deploy**: Run `wrangler deploy` to push changes live
+
+**Important**: Never edit `static-site-worker.js` directly - it's auto-generated!
 
 ## Deployment
 
@@ -64,22 +84,26 @@ Replace large HTML blocks with simple data-include attributes:
 
 - `consent-modal` - Full cookie consent modal
 - `useful-links` - Footer links section
+- `page-overlay` - Page transition loading overlay with spinner
+- `site-header` - Receipt header with logo and site description
+- `auth-modal` - Login modal for Google/GitHub authentication
+- `firebase-init` - Firebase initialization script
 
 ## Adding New Partials
 
-1. Create HTML file in `/partials/` directory
-2. Add to `PARTIALS` object in `static-site-worker.js`:
-
-```javascript
-const PARTIALS = {
-  'my-new-partial': `<div>Your HTML here</div>`
-};
-```
-
-3. Use in HTML:
+1. Create HTML file in `/partials/` directory (e.g., `my-component.html`)
+2. Add content:
 ```html
-<div data-include="my-new-partial"></div>
+<div class="my-component">
+  Your HTML here
+</div>
 ```
+3. Rebuild worker: `node build-worker.js`
+4. Use in HTML:
+```html
+<div data-include="my-component"></div>
+```
+5. Deploy: `wrangler deploy`
 
 ## Testing Locally
 

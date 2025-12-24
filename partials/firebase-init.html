@@ -1,0 +1,38 @@
+<!-- Firebase Auth (CDN, no build step) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithPopup,
+    GoogleAuthProvider,
+    GithubAuthProvider,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-f9TGmva8BXdX6_b460tdrUkzTGkbjjw",
+    authDomain: "qr-redirect-site-1f3b9.firebaseapp.com",
+    projectId: "qr-redirect-site-1f3b9",
+    storageBucket: "qr-redirect-site-1f3b9.firebasestorage.app",
+    messagingSenderId: "897097551184",
+    appId: "1:897097551184:web:aca2f4c3aeac4f21b4b055"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Expose a tiny surface area to script.js
+  window.firebaseAuth = {
+    auth,
+    onAuthStateChanged,
+    signInWithPopup,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    GoogleAuthProvider,
+    GithubAuthProvider
+  };
+</script>

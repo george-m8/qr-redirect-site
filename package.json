@@ -1,0 +1,12 @@
+{
+  "name": "qr-redirect-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:worker": "node build-worker.js",
+    "deploy:static": "npm run build:worker && wrangler deploy",
+    "deploy:api": "cd qr-redirect-worker && wrangler deploy",
+    "deploy:all": "npm run deploy:static && npm run deploy:api"
+  },
+  "description": "SA1L.CC - QR code generator with short redirects"
+}
