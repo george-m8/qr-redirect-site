@@ -163,9 +163,9 @@ class IncludeHandler {
 }
 
 // Import Pages Functions directly
-import qrFunctions from './functions/api/qr.js';
-import qrSlugFunctions from './functions/api/qr/[slug].js';
-import redirectFunction from './functions/r/[slug].js';
+import * as qrFunctions from './functions/api/qr.js';
+import * as qrSlugFunctions from './functions/api/qr/[slug].js';
+import * as redirectFunction from './functions/r/[slug].js';
 
 export default {
   async fetch(request, env, ctx) {
