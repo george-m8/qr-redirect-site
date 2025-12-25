@@ -4,9 +4,15 @@
   "private": true,
   "scripts": {
     "build:worker": "node build-worker.js",
-    "deploy:static": "npm run build:worker && wrangler deploy",
+    "build:pages": "node build-pages.js",
+    "build": "npm run build:worker && npm run build:pages",
+    "deploy:static": "npm run build && wrangler deploy",
     "deploy:api": "cd qr-redirect-worker && wrangler deploy",
     "deploy:all": "npm run deploy:static && npm run deploy:api"
   },
-  "description": "SA1L.CC - QR code generator with short redirects"
+  "description": "SA1L.CC - QR code generator with short redirects",
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^17.0.1"
+  }
 }
