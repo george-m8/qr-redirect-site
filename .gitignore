@@ -23,3 +23,11 @@ Thumbs.db
 # Build
 dist/
 .cache/
+
+# Generated markdown pages (built during deployment)
+.pages-manifest.json
+about.html
+guide.html
+terms.html
+privacy.html
+# Add other generated page names here as needed
