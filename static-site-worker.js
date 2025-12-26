@@ -32,9 +32,19 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
-    // Get the origin response from Pages ASSETS
-    // This worker is deployed as a Pages Function via _worker.js
-    const response = await env.ASSETS.fetch(request);
+    // Handle extensionless URLs - try adding .html
+    let response = await env.ASSETS.fetch(request);
+    
+    // If we get a 404 and the path doesn't have an extension, try adding .html
+    if (response.status === 404 && !url.pathname.includes('.')) {
+      const htmlUrl = new URL(request.url);
+      htmlUrl.pathname = url.pathname.endsWith('/') 
+        ? `${url.pathname}index.html`
+        : `${url.pathname}.html`;
+      
+      const modifiedRequest = new Request(htmlUrl, request);
+      response = await env.ASSETS.fetch(modifiedRequest);
+    }
     
     // Only process HTML pages
     const contentType = response.headers.get('content-type') || '';
