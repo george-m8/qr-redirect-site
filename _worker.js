@@ -202,7 +202,18 @@ export default {
       }
       
       // Get the origin response from Pages
-      const response = await env.ASSETS.fetch(request);
+      let response = await env.ASSETS.fetch(request);
+      
+      // If we get a 404 and the path doesn't have an extension, try adding .html
+      if (response.status === 404 && !url.pathname.includes('.')) {
+        const htmlUrl = new URL(request.url);
+        htmlUrl.pathname = url.pathname.endsWith('/') 
+          ? `${url.pathname}index.html`
+          : `${url.pathname}.html`;
+        
+        const modifiedRequest = new Request(htmlUrl, request);
+        response = await env.ASSETS.fetch(modifiedRequest);
+      }
       
       // Only process HTML
       const contentType = response.headers.get('content-type') || '';
