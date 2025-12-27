@@ -24,10 +24,5 @@ Thumbs.db
 dist/
 .cache/
 
-# Generated markdown pages (built during deployment)
+# Generated markdown pages manifest (HTML files are committed)
 .pages-manifest.json
-about.html
-guide.html
-terms.html
-privacy.html
-# Add other generated page names here as needed
